@@ -1,0 +1,676 @@
+\documentclass[12pt, a4paper, twoside]{report}
+
+% ── Encodage et langue ──────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{amssymb}
+\usepackage{pifont}
+
+% ── Géométrie des pages ─────────────────────────────────────
+\usepackage[
+  a4paper,
+  top=2.5cm, bottom=2.5cm,
+  left=3cm,  right=2.5cm,
+  headheight=15pt
+]{geometry}
+
+% ── Couleurs ────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{primary}{HTML}{003366}    % Ton bleu marine d'origine
+\definecolor{accent}{HTML}{005C99}     % Ton bleu vif d'origine
+\definecolor{lightgray}{HTML}{F4F6FB}
+\definecolor{codebg}{HTML}{F0F4FF}
+\definecolor{rulecolor}{HTML}{CBD5E1}
+
+% ── Graphiques et figures ───────────────────────────────────
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ── En-têtes et pieds de page ───────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\textcolor{primary}{\nouppercase{\leftmark}}}
+\fancyhead[RE,LO]{\small\textcolor{accent}{EST FBS — Chatbot RAG}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── Tableaux ────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% ── Code source ─────────────────────────────────────────────
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{ForestGreen},
+  frame=single,
+  framesep=4pt,
+  keywordstyle=\color{accent}\bfseries,
+  rulecolor=\color{rulecolor},
+  showspaces=false,
+  showstringspaces=false,
+  stringstyle=\color{BrickRed},
+  tabsize=4,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  xleftmargin=16pt,
+  xrightmargin=4pt,
+}
+
+% ── Hyperliens ──────────────────────────────────────────────
+\usepackage[
+  colorlinks=true,
+  linkcolor=primary,
+  urlcolor=accent,
+  citecolor=primary,
+  pdftitle={Rapport PFE --- Chatbot d'Assistance EST FBS},
+  pdfauthor={EST FBS --- DUT Informatique Décisionnelle et Statistiques},
+  pdfsubject={Projet de Fin d'Études},
+]{hyperref}
+
+% ── Table des matières / Listes ─────────────────────────────
+\usepackage{tocloft}
+\renewcommand{\cftchapfont}{\bfseries\color{primary}}
+\renewcommand{\cftsecfont}{\color{primary}}
+\setlength{\cftbeforechapskip}{6pt}
+
+% ── Titres de chapitres ─────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{primary}}
+  {\filleft\colorbox{primary}{\color{white}\quad\chaptertitlename~\thechapter\quad}}
+  {8pt}
+  {\Huge\raggedright}
+  [\vspace{4pt}\color{accent}\hrule\vspace{8pt}]
+\titlespacing*{\chapter}{0pt}{-20pt}{30pt}
+
+\titleformat{\section}{\large\bfseries\color{primary}}{{\color{accent}\thesection}}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{primary}}{{\color{accent}\thesubsection}}{1em}{}
+
+% ── Boîtes stylisées ────────────────────────────────────────
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+% ── Divers ──────────────────────────────────────────────────
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage{emptypage}
+\usepackage{caption}
+\captionsetup{font=small, labelfont={bf,color=primary}, textfont=it}
+\usepackage{subcaption}
+\usepackage{enumitem}
+
+% ── Configuration des variables (Tes infos réelles) ─────────
+\newcommand{\titreProjet}{Développement d'un Chatbot d'Assistance\\pour le Site de l'EST FBS}
+\newcommand{\filiere}{Informatique Décisionnelle et Statistique}
+\newcommand{\diplo}{Diplôme Universitaire de Technologie (DUT)}
+
+% ============================================================
+% DÉBUT DU DOCUMENT
+% ============================================================
+\begin{document}
+\onehalfspacing
+\pagenumbering{gobble}
+
+% ── PAGE DE GARDE ───────────────────────────────────────────
+\begin{titlepage}
+\thispagestyle{empty}
+
+% Bandeaux TikZ stylisés (haut et bas)
+\begin{tikzpicture}[remember picture, overlay]
+  \fill[primary] (current page.north west) rectangle ([yshift=-3.5cm]current page.north east);
+  \fill[accent] ([yshift=-3.5cm]current page.north west) rectangle ([yshift=-3.8cm]current page.north east);
+  \fill[primary] (current page.south west) rectangle ([yshift=2.5cm]current page.south east);
+  \fill[accent] ([yshift=2.5cm]current page.south west) rectangle ([yshift=2.9cm]current page.south east);
+\end{tikzpicture}
+
+% Logos dans le bandeau supérieur supérieur
+\vspace*{-2.2cm}
+\begin{minipage}{0.45\textwidth}
+    \begin{flushleft}
+        \includegraphics[height=1.8cm]{est.png}
+    \end{flushleft}
+\end{minipage}%
+\begin{minipage}{0.1\textwidth}
+    \centering
+\end{minipage}%
+\begin{minipage}{0.45\textwidth}
+    \begin{flushright}
+        \includegraphics[height=1.8cm]{usms.png}
+    \end{flushright}
+\end{minipage}
+
+\vspace{0.6cm}
+{\centering
+
+  \textcolor{white}{\normalsize École Supérieure de Technologie de FBS}\\[3pt]
+\par}
+
+\vspace{1.5cm}
+{\centering
+  \textcolor{primary}{\large\bfseries\MakeUppercase{Rapport de Projet de Fin d'Études}}\\[6pt]
+  \textcolor{accent}{\small\bfseries\MakeUppercase{\diplo\ ---\ \filiere}}\\
+\par}
+
+\vspace{0.8cm}
+\begin{center}
+  \begin{tikzpicture}
+    \node[draw=accent, line width=1.5pt, rounded corners=8pt,
+          fill=lightgray, inner sep=14pt, text width=13.5cm, align=center]
+    {
+      \Huge\bfseries\color{primary}\titreProjet\\[0.3cm]
+      \Large\color{accent}\textbf{NLP \& Architecture RAG}
+    };
+  \end{tikzpicture}
+\end{center}
+
+\vspace{0.8cm}
+% Pipeline RAG miniature en TikZ ajusté pour la largeur de page
+\begin{center}
+\begin{tikzpicture}[scale=0.9, transform shape]
+  \tikzstyle{box}=[draw=accent, fill=white, rounded corners=4pt,
+                   minimum width=2.1cm, minimum height=0.7cm, font=\scriptsize\bfseries\color{primary}]
+  \tikzstyle{arr}=[-Stealth, thick, color=accent]
+  
+  \node[box] (doc)  at (0,0)    {Documents};
+  \node[box] (emb)  at (2.8,0)  {Embeddings};
+  \node[box] (pine) at (5.6,0)  {Pinecone};
+  \node[box] (rag)  at (8.4,0)  {Groq / Llama};
+  \node[box] (user) at (11.2,0) {Interface Web};
+  
+  \draw[arr] (doc)  -- (emb);
+  \draw[arr] (emb)  -- (pine);
+  \draw[arr] (pine) -- (rag);
+  \draw[arr] (rag) -- (user);
+\end{tikzpicture}
+\end{center}
+
+\vspace{1.2cm}
+\begin{center}
+  \large
+  \begin{tabular}{p{5cm}l}
+    \textcolor{primary}{\bfseries Réalisé par :} & Boubker Abderrahmane \\
+                                                 & Mahdam Mohammed Amine \\[0.4cm]
+    \textcolor{primary}{\bfseries Encadré par :}  & Pr. Rachid Ait Daoud \\[0.4cm]
+    \textcolor{primary}{\bfseries Domaine :}      & Intelligence Artificielle \& NLP \\
+  \end{tabular}
+\end{center}
+
+\vfill
+\begin{center}
+  \textcolor{primary}{\bfseries ANNÉE UNIVERSITAIRE : 2025 -- 2026}\\[0.4cm]
+  \textcolor{white}{\footnotesize Email: estfbs@usms.ma
+ Site Web: http:// estfbs.usms.ac.ma/}
+\end{center}
+\end{titlepage}
+
+% ── PAGE DE DÉDICACE (Optionnelle) ──────────────────────────
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{6cm}
+\begin{flushright}
+\itshape
+
+\end{flushright}
+
+
+\pagenumbering{roman}
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+Texte des remerciements ici.
+
+\newpage
+
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+Résumé du projet ici.
+
+
+
+\newpage
+
+\chapter*{Liste des abréviations}
+\addcontentsline{toc}{chapter}{Liste des abréviations}
+
+\begin{longtable}{|c|m{10cm}|}
+\hline
+\textbf{Abréviation} & \textbf{Signification} \\ \hline
+API & Application Programming Interface \\ \hline
+NLP & Natural Language Processing \\ \hline
+RAG & Retrieval-Augmented Generation \\ \hline
+LLM & Large Language Model \\ \hline
+HTML & HyperText Markup Language \\ \hline
+CSS & Cascading Style Sheets \\ \hline
+SQL & Structured Query Language \\ \hline
+\end{longtable}
+
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\chapter{Introduction générale}
+
+\section{Contexte général du projet}
+Aujourd'hui, l'intelligence artificielle est présente dans de nombreux domaines de notre vie quotidienne. L'une de ses applications les plus utiles est le chatbot, un programme capable de discuter avec un utilisateur et de répondre à ses questions de manière 
+\newline
+automatique.
+
+\section{Problématique}
+Dans le domaine de l'enseignement supérieur, les étudiants ont souvent du mal à trouver rapidement des informations sur leurs formations, les conditions d'inscription ou le règlement de leur école. Ils doivent parcourir plusieurs pages d'un site web ou attendre une réponse de l'administration. Cela prend du temps et n'est pas toujours pratique.
+
+L'École Supérieure de Technologie de Fkih Ben Salah (EST FBS), qui fait partie de l'Université Sultan Moulay Slimane, fait face à ce même problème. Les étudiants et les candidats posent souvent les mêmes questions à l'administration, ce qui crée une charge de travail inutile. Le site web de l'école existe, mais il ne permet pas à l'utilisateur de poser des questions directement et d'obtenir une réponse immédiate.
+
+
+\section{Objectifs du projet}
+C'est dans ce contexte que ce Projet de Fin d'Études a été réalisé, dans le cadre de la deuxième année du Diplôme Universitaire de Technologie, filière \newline Informatique Décisionnelle et Statistiques. L'objectif est de développer un chatbot \newline intelligent qui peut répondre aux questions des étudiants en se basant sur les documents officiels de l'école.
+\newpage
+
+\section{Méthodologie adoptée}
+
+Pour mener à bien ce projet, nous avons adopté une démarche structurée en quatre phases clés. Nous avons commencé par l'analyse et la spécification des besoins, une étape préliminaire visant à recueillir les exigences des utilisateurs et à étudier les documents officiels de l'établissement. Ensuite, la phase de Crisp nous a permis de définir \newline l'architecture globale du système et de sélectionner les technologies les plus adaptées.
+\newline
+
+Nous avons enchaîné avec le développement des différents composants, notamment le pipeline RAG, l'API backend et l'interface utilisateur. Enfin, une phase de tests rigoureux a validé la conformité du système par rapport aux attentes et corrigé les anomalies.
+\newline
+
+La solution proposée s'appuie sur l'architecture RAG (Retrieval-Augmented Generation). Cette approche moderne permet au chatbot d'interroger dynamiquement la base documentaire de l'école afin d'y extraire les informations les plus pertinentes.
+\newline 
+
+Le système utilise ensuite ces données textuelles pour générer une réponse claire, \newline précise et parfaitement contextualisée. Grâce à ce mécanisme, les réponses fournies à \newline l'utilisateur sont systématiquement adossées à des sources réelles et vérifiables. Cela \newline permet de  limiter drastiquement les risques d'hallucination de l'intelligence artificielle et de garantir la fiabilité de l'application.
+\newline 
+
+Sur le plan technique, l'écosystème du projet repose sur un ensemble de \newline technologies modernes et performantes. Nous utilisons le framework FastAPI pour la conception d'une API robuste, ainsi que LangChain pour l'orchestration globale du \newline  pipeline RAG. \newpage La base de données vectorielle Pinecone assure le stockage et la recherche de similarité des documents, tandis que Google Gemini s'occupe de transformer les textes en vecteurs numériques. Les réponses sont générées rapidement par le modèle Llama-3.3-70b via Groq. Enfin, Supabase gère la base PostgreSQL pour l'historique, et l'interface web s'appuie sur HTML, CSS et JavaScript.
+L'interface frontend a été développée en HTML, CSS et JavaScript pur, sans l'utilisation d'un framework externe. Elle se présente sous la forme d'une Single-Page Application (SPA), ce qui signifie que toute l'interaction avec \newline l'utilisateur se déroule sur une seule page web sans rechargement. Le design adopte un thème sombre avec des couleurs bleu et violet, ce qui donne à l'application un aspect moderne et professionnel. L'interface propose également une barre latérale contenant des questions suggérées, permettant à l'utilisateur de démarrer rapidement une conversation sans avoir à taper manuellement sa question. Enfin, les sources utilisées pour générer chaque réponse sont affichées sous forme de badges colorés, ce qui renforce la transparence et la fiabilité du système.
+
+\section{Structure du rapport}
+
+Le présent rapport est organisé en cinq chapitres pour présenter notre travail.
+
+Le premier chapitre présente le contexte général du projet, le problème identifié au sein de l’école ainsi que les objectifs à atteindre.
+\newline
+
+Le deuxième chapitre est consacré à l’étude des besoins, avec une présentation détaillée des différents utilisateurs du système et des cas d’utilisation.
+\newline
+
+Le troisième chapitre présente la phase de conception du système, en mettant en avant son architecture générale, les diagrammes techniques et la base de données.
+\newline
+
+Le quatrième chapitre décrit la phase de développement, les outils utilisés, les \newline fonctionnalités réalisées et les choix techniques adoptés.
+Le cinquième chapitre présente les tests réalisés, les résultats obtenus, les limites actuelles de l’application ainsi que les \newline  améliorations possibles.
+Enfin, une conclusion générale résume les principaux apports du projet.
+
+\chapter{Contexte général du projet}
+
+\section{Introduction}
+Ce chapitre présente le cadre général dans lequel s'inscrit notre projet. Nous allons d'abord présenter l'établissement d'accueil, puis décrire le projet, son contexte, sa\newline problématique et ses objectifs. Ce chapitre constitue la base nécessaire pour comprendre les choix techniques et les décisions de conception qui seront détaillés dans les chapitres suivants.
+
+
+\section{Présentation de l'École Supérieure de Technologie de Fquih Ben Salah}
+L'École Supérieure de Technologie de Fquih Ben Salah (EST FBS) est un \newline établissement public d'enseignement supérieur créé en 2019. Elle est rattachée à \newline l'Université Sultan Moulay Slimane et se situe à Hay Tighnari, Route \newline Nationale N°11, Fquih Ben Salah. \newline
+
+L'école propose des formations de niveau Bac+2 (DUT) et Bac+3 (Bachlor) dans \newline plusieurs filières, dont le Génie Informatique et l'Informatique Décisionnelle et\newline Statistiques. Sa mission principale est de former des techniciens spécialisés \newline capables de répondre aux besoins du marché de l'emploi régional et national.
+ \newpage
+\section{Présentation du projet EST FBS Assistant}
+
+EST FBS Assistant est une application web sous forme de chatbot intelligent, \newline développée pour aider les étudiants et les candidats à trouver rapidement des réponses à leurs questions concernant l’école. Son objectif est de faciliter l’accès aux informations importantes et de fournir une assistance disponible à tout moment. \newline
+
+Le système utilise une architecture RAG (Retrieval-Augmented Generation), qui \newline permet de rechercher des informations pertinentes dans une base de connaissances avant de générer une réponse. Cette approche améliore la qualité et la précision des réponses fournies aux utilisateurs.\newline
+
+L’application est composée d’un backend développé en Python avec FastAPI, qui gère le traitement des demandes et la communication avec les différents services. Elle dispose également d’un frontend réalisé en HTML, CSS et JavaScript, offrant une interface simple, moderne et facile à utiliser.\newline
+
+Une base de données PostgreSQL est utilisée pour enregistrer les interactions des \newline utilisateurs, ce qui permet de suivre l’utilisation du système et d’améliorer ses \newline performances au fil du temps.\newline
+
+Grâce à cette solution, les utilisateurs peuvent obtenir des informations rapidement sans avoir à rechercher manuellement dans différents documents ou pages web. Le chatbot contribue ainsi à améliorer l’expérience des étudiants et à simplifier l’accès aux \newline informations liées à l’établissement.
+\newline
+\newline
+\begin{center}
+\begin{tikzpicture}[scale=0.9, transform shape]
+  \tikzstyle{box}=[draw=accent, fill=white, rounded corners=3pt,
+                   minimum width=2.1cm, minimum height=0.7cm, font=\scriptsize\bfseries\color{primary}]
+  \tikzstyle{arr}=[-Stealth, thick, color=accent]
+  
+  \node[box] (doc)  at (0,0)    {Documents};
+  \node[box] (emb)  at (2.8,0)  {Embeddings};
+  \node[box] (rag)  at (5.6,0)  {Groq / Llama};
+  \node[box] (user) at (8.4,0) {Interface Web};
+  
+  \draw[arr] (doc)  -- (emb);
+  \draw[arr] (emb) -- (rag);
+  \draw[arr] (rag) -- (user);
+\end{tikzpicture}
+\end{center}
+\newpage
+\section{Contexte du projet}
+L'École Supérieure de Technologie de Fquih Ben Salah accueille chaque année un nombre croissant d'étudiants, ce qui génère un flux important de demandes \newline d'informations adressées à l'administration. Ces demandes portent souvent sur les mêmes sujets : les filières disponibles, les conditions d'admission, les dates d'inscription, le \newline règlement intérieur ou encore les contacts utiles.
+\newline
+
+Le site web actuel de l'école est un site statique, ce qui signifie qu'il affiche des \newline informations fixes sans permettre à l'utilisateur d'interagir avec le contenu.
+L'étudiant doit naviguer manuellement entre plusieurs pages pour trouver ce qu'il cherche, ce qui prend du temps et peut être source de confusion, surtout pour les nouveaux bacheliers qui ne connaissent pas encore l'établissement.
+\newline
+
+Par ailleurs, le personnel administratif se retrouve souvent sollicité pour répondre à des questions simples et répétitives qui pourraient facilement être traitées de manière \newline automatique. Cela représente une perte de temps et une charge de travail supplémentaire qui pourrait être évitée grâce à une solution numérique adaptée.
+\newline
+
+Dans ce contexte, l'idée d'un chatbot intelligent est apparue comme une réponse \newline directe à ces problèmes. Un tel système permettrait de fournir des réponses instantanées, disponibles 24h/24 et 7j/7, sans nécessiter l'intervention d'un agent humain. De plus, en basant les réponses sur les documents officiels de l'école, on garantit leur fiabilité et leur exactitude.
+\newline
+
+Ce projet s'inscrit donc dans une démarche de modernisation des services numériques de l'EST FBS, en tirant profit des avancées récentes en intelligence artificielle et en \newline traitement du langage naturel. 
+
+\newpage
+
+\section{Problématique}
+Les utilisateurs du site web de l’EST FBS rencontrent souvent des difficultés lorsqu’ils cherchent des informations importantes liées à leur parcours universitaire. En effet, les informations disponibles sont réparties sur plusieurs pages du site, ce qui rend la \newline navigation parfois longue et compliquée. Les étudiants doivent souvent parcourir de \newline nombreuses rubriques avant de trouver la réponse à leurs questions. De plus, le site ne possède pas un moteur de recherche suffisamment performant pour faciliter l’accès rapide aux informations recherchées. Cette situation peut entraîner une perte de temps et une certaine frustration chez les utilisateurs. Par ailleurs, aucune interface de discussion ou d’assistance instantanée n’est disponible pour guider les visiteurs du site. Ainsi, lorsqu’un étudiant ou un visiteur a une question précise, il doit généralement contacter \newline l’administration ou chercher lui-même dans les différents documents publiés. Cette \newline méthode n’est pas toujours efficace et peut ralentir l’accès à l’information. En outre, les membres de l’administration consacrent une partie importante de leur temps à répondre aux mêmes questions de manière répétitive. Cela augmente leur charge de travail et réduit le temps qu’ils pourraient consacrer à d’autres tâches plus importantes. Face à cette \newline situation, il devient nécessaire de mettre en place une solution moderne et efficace. La question principale est donc de savoir comment permettre aux utilisateurs d’obtenir \newline rapidement des réponses fiables, précises et instantanées à leurs questions, tout en \newline s’appuyant sur les documents officiels et les informations validées par l’établissement.
+
+\section{Objectifs du projet}
+Le projet vise plusieurs objectifs principaux. Le premier est de développer un \newline chatbot fonctionnel capable de répondre aux questions des étudiants en langage naturel. Le deuxième est d'indexer les documents officiels de l'école dans une base vectorielle afin de les rendre interrogeables. Le troisième est de concevoir une interface web simple et intuitive. Le quatrième est de journaliser toutes les interactions dans une base de données pour permettre un suivi des questions posées. Enfin, le dernier objectif est de garantir que les réponses générées sont toujours basées sur des sources documentaires réelles.
+\newpage
+\section{Méthodologie de travail}
+Pour mener à bien ce projet, nous avons adopté une approche itérative divisée en plusieurs étapes. La première étape a consisté à analyser les besoins et à collecter les documents officiels de l'école. La deuxième étape a porté sur la méthodologie CRISP. La troisième étape a été consacrée au développement des différents modules : le script d'indexation, le pipeline RAG, l'API REST et l'interface utilisateur. Enfin, la quatrième étape a concerné les tests et la validation du système.
+\section{Synthèse}
+Ce chapitre a permis de présenter le cadre général dans lequel s'inscrit notre projet. Nous avons d'abord présenté l'École Supérieure de Technologie de Fquih Ben Salah, ses formations et sa mission. Ensuite, nous avons décrit le projet EST FBS Assistant et les \newline  raisons qui ont motivé sa création.
+Nous avons identifié une problématique réelle et concrète : le site web actuel de l'école ne permet pas une interaction directe avec les utilisateurs, ce qui oblige les étudiants à chercher manuellement les informations dont ils ont besoin, et l'administration à répondre manuellement à des questions répétitives. Cette situation justifie pleinement le développement d'un chatbot intelligent basé sur une \newline  architecture RAG.
+Les objectifs du projet ont été clairement définis : développer un \newline  système capable de répondre aux questions en langage naturel, indexer les documents officiels dans une base vectorielle, proposer une interface web simple et intuitive, et \newline  journaliser les interactions dans une base de données. Ces objectifs couvrent à la fois les aspects techniques et les besoins réels des utilisateurs.
+La méthodologie adoptée, basée sur une approche itérative, nous a permis d'avancer de manière organisée, en passant par les étapes d'analyse, de développement et de test. Cette démarche structurée a facilité la gestion du projet et la résolution des problèmes rencontrés.
+Le chapitre suivant sera consacré à l'analyse détaillée des besoins fonctionnels et non fonctionnels du système, ainsi qu'à la description des acteurs et des cas d'utilisation.
+
+\chapter{Analyse et spécification des besoins}
+
+\section{Introduction}
+Ce chapitre est consacré à l'analyse des besoins du système. Avant de commencer le développement, il est essentiel de bien comprendre ce que le système doit faire et pour qui il est destiné. Nous allons d'abord étudier les solutions existantes, puis identifier les acteurs du système, décrire les besoins fonctionnels et non fonctionnels, et enfin présenter les scénarios d'utilisation et le diagramme de cas d'utilisation.
+
+\section{Étude de l'existant}
+Actuellement, le site web de l’EST FBS fonctionne principalement comme un site \newline statique qui présente des informations générales concernant l’établissement, les formations proposées, les actualités et certains documents administratifs. Cependant, ce site ne \newline permet pas une véritable interaction avec les utilisateurs. Lorsqu’un étudiant souhaite obtenir une information précise, il doit naviguer manuellement entre plusieurs pages et consulter différents contenus avant de trouver la réponse recherchée. Cette démarche peut prendre du temps et rendre l’expérience utilisateur moins pratique, surtout lorsque \newline l’information recherchée n’est pas facilement accessible. De plus, le site ne dispose pas d’un moteur de recherche interne capable de filtrer ou retrouver rapidement les informations pertinentes. Il n’existe également aucun système automatique de questions-réponses permettant aux étudiants d’obtenir une assistance immédiate.
+\newline
+Pour répondre à ce type de besoin, plusieurs solutions existent déjà sur le marché.\newline Certaines utilisent des chatbots traditionnels basés sur des règles prédéfinies. Ces systèmes fonctionnent à partir d’un ensemble de questions et de réponses préparées à l’avance. Ils peuvent répondre uniquement aux demandes déjà prévues lors de leur conception. Ainsi, lorsqu’un utilisateur pose une question différente ou plus complexe, le chatbot devient incapable de fournir une réponse satisfaisante. En plus de cette limitation, ces systèmes demandent une maintenance régulière afin d’ajouter de nouvelles règles et mettre à jour les réponses existantes, ce qui augmente les efforts de gestion.
+\newpage
+\subsection{Exemples de LLMs}
+
+Les solutions modernes basées sur les modèles de langage (Large Language Models ou LLMs) utilisent des technologies avancées capables de comprendre et de générer du texte de manière très proche du langage humain. Parmi les exemples les plus connus, on peut citer ChatGPT, Claude ou encore Gemini, qui sont capables de répondre à une grande variété de questions dans différents domaines. Ces systèmes sont entraînés sur de très grandes quantités de données textuelles, ce qui leur permet de comprendre le contexte d’une question et de produire des réponses cohérentes, naturelles et bien structurées.
+
+Cependant, malgré leurs performances élevées, ces modèles présentent certaines limites importantes dans un contexte spécifique comme celui de l’EST FBS. En effet, ils ne disposent pas d’un accès direct aux documents internes de l’établissement et s’appuient principalement sur des connaissances générales apprises lors de leur entraînement. Par conséquent, ils ne peuvent pas toujours garantir l’exactitude des informations lorsqu’il s’agit de données spécifiques à une école ou à une organisation particulière.
+
+Dans le cadre de l’EST FBS, cette limitation peut poser un problème, car les réponses générées peuvent parfois être inexactes, incomplètes ou ne pas respecter les procédures officielles de l’établissement. Cela peut également entraîner des confusions chez les étudiants ou les utilisateurs qui recherchent des informations fiables concernant les formations, les inscriptions ou les services administratifs.
+
+Ainsi, bien que les LLMs soient très puissants et utiles pour la compréhension du \newline  langage naturel, leur utilisation seule n’est pas suffisante pour répondre aux besoins précis d’un environnement académique structuré. C’est pour cette raison que leur intégration dans une architecture combinée avec une base documentaire, comme dans le cas des \newline systèmes RAG, devient une solution plus adaptée et plus fiable.
+\newpage
+Afin de dépasser ces limites, notre projet propose une solution basée sur l’approche RAG (Retrieval-Augmented Generation). Cette méthode combine la puissance des \newline modèles de langage modernes avec un mécanisme de recherche dans les documents \newline officiels de l’établissement. Avant de générer une réponse, le système recherche les \newline informations pertinentes dans les ressources validées de l’école puis utilise ces \newline informations pour construire une réponse adaptée. Grâce à cette approche, les utilisateurs peuvent obtenir des réponses rapides, précises et cohérentes avec le contexte réel de l’EST FBS. Cette solution permet également de réduire la charge de travail de \newline l’administration tout en améliorant l’accès aux informations pour \newline les étudiants et les visiteurs.
+\newline
+
+\section{Identification des acteurs}
+Le système implique deux acteurs principaux. Le premier est l'utilisateur, qui peut être un étudiant, un candidat à l'inscription ou toute personne souhaitant obtenir des informations sur l'EST FBS. Cet acteur interagit avec le chatbot via l'interface web en posant des questions en langage naturel. Le deuxième acteur est l'administrateur, qui est responsable de la gestion des documents indexés dans la base vectorielle. Il peut ajouter de nouveaux documents, lancer le script d'indexation et consulter les logs des interactions enregistrés dans la base de données. \newpage
+\section{Besoins fonctionnels}
+Les besoins fonctionnels décrivent les fonctionnalités que le système doit offrir à ses utilisateurs.
+
+BF-01 : Poser une question — L'utilisateur doit pouvoir saisir une question en langage naturel dans l'interface web et recevoir une réponse générée automatiquement par le système.
+
+BF-02 : Afficher les sources — Pour chaque réponse générée, le système doit afficher les noms des documents utilisés comme sources, afin que l'utilisateur puisse vérifier l'origine de l'information.
+
+BF-03 : Questions suggérées — L'interface doit proposer une liste de questions fréquentes sous forme de raccourcis pour aider l'utilisateur à démarrer rapidement une conversation.
+
+BF-04 : Vérifier le statut du service — L'interface doit afficher un indicateur en temps réel montrant si le backend est disponible ou non.
+
+BF-05 : Conserver l'historique de la conversation — Le système doit mémoriser les derniers échanges de la conversation pour maintenir le contexte lors des questions suivantes.
+
+BF-06 : Journaliser les interactions — Chaque question posée et chaque réponse générée doivent être enregistrées dans la base de données PostgreSQL pour permettre un suivi ultérieur.
+
+BF-07 : Indexer les documents — L'administrateur doit pouvoir ajouter de nouveaux documents PDF ou TXT et les indexer dans la base vectorielle via un script dédié.
+
+\newpage
+\section{Besoins non fonctionnels}
+Les besoins non fonctionnels représentent l’ensemble des critères de qualité et des contraintes techniques que le système doit respecter afin d’assurer son bon \newline fonctionnement et offrir une expérience satisfaisante aux utilisateurs. Dans le cadre de ce projet, le système doit garantir de bonnes performances en fournissant des réponses dans un délai inférieur à dix secondes dans des conditions normales d’utilisation. Il doit également assurer une disponibilité continue afin que le service reste accessible à tout\newline moment, de jour comme de nuit, après son déploiement sur un environnement de \newline production. La fiabilité constitue aussi un aspect essentiel : les réponses générées doivent s’appuyer uniquement sur les documents officiels intégrés dans la base de connaissances afin d’éviter la génération d’informations incorrectes ou non vérifiées.
+
+En parallèle, la sécurité du système doit être prise en compte afin de protéger les données sensibles utilisées par l’application. Les clés d’accès aux services externes ainsi que les informations confidentielles doivent être stockées dans des variables d’environnement et ne jamais apparaître directement dans le code source. Le système doit également être facile à maintenir afin de permettre l’ajout ou la mise à jour de nouveaux documents sans nécessiter de modifications importantes dans l’architecture ou le développement de l’application. De plus, une bonne portabilité est attendue pour garantir que la solution puisse fonctionner sur différents systèmes d’exploitation avec un minimum d’adaptations techniques. Enfin, une attention particulière doit être portée à la convivialité de l’interface utilisateur afin qu’elle soit simple, claire, intuitive et facilement utilisable, même par des utilisateurs ayant peu de connaissances techniques.
+
+\section{Scénarios d'utilisation}
+\subsection{Exemples d'utilisation}
+
+\textbf{Scénario 1 : Consultation des informations sur les formations}
+
+Un étudiant accède à l’interface web du chatbot afin d’obtenir des informations concernant les formations proposées par l’établissement. Il saisit une question concernant les filières disponibles dans la formation DUT. 
+\newpage
+Le système reçoit la demande puis transforme le texte en représentation vectorielle afin d’effectuer une recherche dans la base de données vectorielle Pinecone. Les passages les plus pertinents sont récupérés et transmis au modèle de langage Groq avec le contexte correspondant. Le modèle génère ensuite une réponse claire et structurée basée sur les documents officiels disponibles. La réponse est affichée sur l’interface avec les références des documents utilisés pour produire le résultat. Enfin, l’échange peut être enregistré dans la base de données afin d’assurer le suivi des interactions.
+
+\bigskip
+
+\textbf{Scénario 2 : Utilisation d’une question suggérée}
+
+Un candidat souhaitant obtenir des informations sur l’inscription ouvre l’interface du chatbot. Dans la barre latérale, plusieurs questions fréquentes lui sont proposées afin de faciliter l’utilisation du système. Il sélectionne une question liée aux conditions d’admission. Le chatbot traite automatiquement cette demande sans nécessiter de saisie supplémentaire.
+\newline
+
+Le système effectue ensuite la recherche dans la base documentaire et transmet les résultats au modèle de génération. Une réponse détaillée est produite puis affichée en quelques secondes accompagnée des sources ayant servi à la construction de la réponse.
+
+\bigskip
+
+\textbf{Scénario 3 : Ajout d'un nouveau document par l'administrateur}
+
+L'administrateur souhaite enrichir la base documentaire du chatbot avec un nouveau fichier PDF contenant des informations mises à jour sur l'emploi du temps. Pour cela, il ajoute le document dans le répertoire \texttt{data/} du projet puis lance le script \texttt{load\_vectors.py}. 
+\newline
+
+Le script analyse automatiquement le contenu du document, le découpe en plusieurs segments puis génère les vecteurs correspondants. Ces vecteurs sont ensuite enregistrés dans la base Pinecone afin d'être utilisés lors des recherches futures. Une fois cette opération terminée, le nouveau document devient immédiatement accessible au chatbot et peut être utilisé pour répondre aux questions des utilisateurs.
+\newpage
+\section{Description du Diagramme de cas d'utilisation}
+
+
+Le diagramme de cas d’utilisation permet de représenter les différentes interactions entre les acteurs et le système. Dans le cadre du projet \textit{EST FBS Assistant}, deux acteurs principaux interviennent : l’Utilisateur et l’Administrateur.
+
+L’Utilisateur correspond principalement aux étudiants, candidats ou visiteurs qui utilisent le chatbot pour accéder rapidement aux informations disponibles. Il peut poser une question libre, consulter les documents sources associés aux réponses générées, utiliser les questions suggérées affichées par l’interface et vérifier l’état de disponibilité du service.
+
+L’Administrateur est responsable de l’alimentation et de la maintenance du système. Il peut ajouter et indexer de nouveaux documents dans la base documentaire, consulter l’historique des interactions ainsi qu’assurer la gestion des ressources utilisées par le chatbot.
+\newpage
+\section{Diagramme d'utilisation}
+\newline
+
+Le diagramme suivant présente les principaux cas d’utilisation et met en évidence la séparation des responsabilités entre les différents acteurs.
+
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+actor/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.9cm},
+usecase/.style={draw, ellipse, minimum width=4.2cm, minimum height=1cm}
+]
+
+% Acteurs
+\node[actor] (user) at (-5,0) {Utilisateur};
+\node[actor] (admin) at (5,0) {Administrateur};
+
+% Cas utilisateur
+\node[usecase] (q1) at (0,3) {Poser une question};
+\node[usecase] (q2) at (0,1.5) {Consulter les sources};
+\node[usecase] (q3) at (0,0) {Utiliser les questions suggérées};
+\node[usecase] (q4) at (0,-1.5) {Vérifier le statut du service};
+
+% Cas admin
+\node[usecase] (a1) at (0,-3.5) {Indexer de nouveaux documents};
+\node[usecase] (a2) at (0,-5) {Consulter les interactions};
+\node[usecase] (a3) at (0,-6.5) {Gérer la base documentaire};
+
+% Connexions
+\draw[-] (user)--(q1);
+\draw[-] (user)--(q2);
+\draw[-] (user)--(q3);
+\draw[-] (user)--(q4);
+
+\draw[-] (admin)--(a1);
+\draw[-] (admin)--(a2);
+\draw[-] (admin)--(a3);
+
+\end{tikzpicture}
+
+\caption{Diagramme de cas d’utilisation du système EST FBS Assistant}
+\label{fig:usecase}
+\end{figure}
+
+\newpage
+\section{Synthèse}
+
+Dans ce chapitre, nous avons étudié les besoins nécessaires à la réalisation du système \textit{EST FBS Assistant}. L’analyse du site actuel et des solutions disponibles a permis d’identifier plusieurs limites liées à la recherche d’information et à l’assistance des utilisateurs. Cette étude a conduit au choix d’une architecture basée sur l’approche RAG afin d’améliorer la qualité et la pertinence des réponses générées.
+
+Nous avons ensuite identifié les principaux acteurs du système ainsi que leurs rôles respectifs. Les besoins fonctionnels et non fonctionnels ont été définis afin de préciser les fonctionnalités attendues et les contraintes techniques à respecter. Enfin, plusieurs scénarios d’utilisation ont été présentés pour illustrer le fonctionnement global de la solution proposée.
+
+L’ensemble des éléments présentés dans ce chapitre constitue une base solide pour passer à l’étape suivante consacrée à la conception de l’architecture et au développement du système.
+
+
+
+\chapter{Conception et architecture du système}
+
+\section{Introduction}
+Texte ici.
+
+\section{Architecture générale de l'application}
+Texte ici.
+
+\section{Architecture RAG}
+Texte ici.
+
+\section{Conception du frontend}
+Texte ici.
+
+\section{Conception du backend}
+Texte ici.
+
+\section{Conception de la base vectorielle}
+Texte ici.
+
+\section{Conception de la base de données}
+Texte ici.
+
+\section{Diagramme de séquence}
+Texte ici.
+
+\section{Structure du projet}
+Texte ici.
+
+\section{Synthèse}
+Texte ici.
+
+\chapter{Réalisation et développement}
+
+\section{Introduction}
+Texte ici.
+
+\section{Environnement de développement}
+Texte ici.
+
+\section{Technologies utilisées}
+Texte ici.
+
+\section{Développement de l'interface utilisateur}
+Texte ici.
+
+\section{Développement de l'API avec FastAPI}
+Texte ici.
+
+\section{Mise en place du pipeline RAG}
+Texte ici.
+
+\section{Intégration de Pinecone}
+Texte ici.
+
+\section{Intégration des embeddings Gemini}
+Texte ici.
+
+\section{Intégration du modèle Groq}
+Texte ici.
+
+\section{Intégration de Supabase PostgreSQL}
+Texte ici.
+
+\section{Indexation des documents}
+Texte ici.
+
+\section{Endpoints API développés}
+Texte ici.
+
+\section{Synthèse}
+Texte ici.
+
+\chapter{Tests, résultats et perspectives}
+
+\section{Introduction}
+Texte ici.
+
+\section{Tests fonctionnels}
+Texte ici.
+
+\section{Tests de l'API}
+Texte ici.
+
+\section{Tests du chatbot}
+Texte ici.
+
+\section{Résultats obtenus}
+Texte ici.
+
+\section{Limites du projet}
+Texte ici.
+
+\section{Perspectives d'amélioration}
+Texte ici.
+
+\section{Synthèse}
+Texte ici.
+
+\chapter*{Conclusion générale}
+\addcontentsline{toc}{chapter}{Conclusion générale}
+Texte ici.
+
+\chapter*{Annexes}
+\addcontentsline{toc}{chapter}{Annexes}
+
+\section*{Annexe I : Structure du projet}
+\addcontentsline{toc}{section}{Annexe I : Structure du projet}
+Texte ici.
+
+\section*{Annexe II : Exemples de questions posées au chatbot}
+\addcontentsline{toc}{section}{Annexe II : Exemples de questions posées au chatbot}
+Texte ici.
+
+\section*{Annexe III : Configuration du fichier .env}
+\addcontentsline{toc}{section}{Annexe III : Configuration du fichier .env}
+Texte ici.
+
+\begin{thebibliography}{9}
+
+\bibitem{fastapi}
+FastAPI Documentation. Disponible en ligne : \url{https://fastapi.tiangolo.com/}
+
+\bibitem{langchain}
+LangChain Documentation. Disponible en ligne : \url{https://python.langchain.com/}
+
+\bibitem{pinecone}
+Pinecone Documentation. Disponible en ligne : \url{https://docs.pinecone.io/}
+
+\bibitem{groq}
+Groq Documentation. Disponible en ligne : \url{https://console.groq.com/docs}
+
+\end{thebibliography}
+
+\end{document}

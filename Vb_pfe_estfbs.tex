@@ -1,0 +1,1510 @@
+% ============================================================
+%  RAPPORT DE PROJET DE FIN D'ÉTUDES — DUT INFORMATIQUE
+%  EST Fkih Ben Salah — Université Sultan Moulay Slimane
+%  Chatbot d'Assistance EST FBS (Architecture RAG)
+%  Compatible Overleaf (pdfLaTeX)
+% ============================================================
+
+\documentclass[12pt, a4paper, twoside]{report}
+
+% ── Encodage et langue ──────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{amssymb}
+\usepackage{pifont}
+
+% ── Géométrie des pages ─────────────────────────────────────
+\usepackage[
+  a4paper,
+  top=2.5cm, bottom=2.5cm,
+  left=3cm,  right=2.5cm,
+  headheight=15pt
+]{geometry}
+
+% ── Couleurs ────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{primary}{HTML}{1A3A6E}    % bleu marine
+\definecolor{accent}{HTML}{4776E6}     % bleu vif
+\definecolor{lightgray}{HTML}{F4F6FB}
+\definecolor{codebg}{HTML}{F0F4FF}
+\definecolor{rulecolor}{HTML}{CBD5E1}
+
+% ── Graphiques et figures ───────────────────────────────────
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ── En-têtes et pieds de page ───────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\textcolor{primary}{\nouppercase{\leftmark}}}
+\fancyhead[RE,LO]{\small\textcolor{accent}{EST FBS — Chatbot RAG}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
+
+% ── Tableaux ────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% ── Code source ─────────────────────────────────────────────
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{ForestGreen},
+  frame=single,
+  framesep=4pt,
+  keywordstyle=\color{accent}\bfseries,
+  rulecolor=\color{rulecolor},
+  showspaces=false,
+  showstringspaces=false,
+  stringstyle=\color{BrickRed},
+  tabsize=4,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  xleftmargin=16pt,
+  xrightmargin=4pt,
+}
+\lstdefinelanguage{python3}{
+  language=Python,
+  morekeywords={async,await,dataclass,frozen,from,import,None,True,False,self,cls},
+}
+\lstdefinelanguage{javascript}{
+  keywords={const,let,var,function,return,if,else,async,await,fetch,new,document,null,true,false},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+}
+
+% ── Hyperliens ──────────────────────────────────────────────
+\usepackage[
+  colorlinks=true,
+  linkcolor=primary,
+  urlcolor=accent,
+  citecolor=primary,
+  pdftitle={Rapport PFE --- Chatbot d'Assistance EST FBS},
+  pdfauthor={EST FBS --- DUT Informatique Décisionnelle et Statistiques},
+  pdfsubject={Projet de Fin d'Études},
+]{hyperref}
+
+% ── Table des matières / Listes ─────────────────────────────
+\usepackage{tocloft}
+\renewcommand{\cftchapfont}{\bfseries\color{primary}}
+\renewcommand{\cftsecfont}{\color{primary}}
+\setlength{\cftbeforechapskip}{6pt}
+
+% ── Titres de chapitres ─────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{primary}}
+  {\filleft\colorbox{primary}{\color{white}\quad\chaptertitlename~\thechapter\quad}}
+  {8pt}
+  {\Huge\raggedright}
+  [\vspace{4pt}\color{accent}\hrule\vspace{8pt}]
+\titlespacing*{\chapter}{0pt}{-20pt}{30pt}
+
+\titleformat{\section}{\large\bfseries\color{primary}}{{\color{accent}\thesection}}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{primary}}{{\color{accent}\thesubsection}}{1em}{}
+
+% ── Boîtes stylisées ────────────────────────────────────────
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+\newtcolorbox{infobox}[1][]{
+  enhanced, breakable,
+  colback=lightgray, colframe=accent,
+  boxrule=0.8pt, arc=4pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title=#1, fonttitle=\bfseries\small,
+  coltitle=white, attach boxed title to top left={yshift=-2mm, xshift=6mm},
+  boxed title style={colback=accent, arc=3pt},
+}
+
+% ── Divers ──────────────────────────────────────────────────
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage{emptypage}
+\usepackage{caption}
+\captionsetup{font=small, labelfont={bf,color=primary}, textfont=it}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=4pt}
+\setlist[enumerate]{leftmargin=*, itemsep=2pt, topsep=4pt}
+
+% ── Commandes personnalisées ────────────────────────────────
+\newcommand{\tech}[1]{\texttt{\color{accent}#1}}
+\newcommand{\term}[1]{\textit{\color{primary}#1}}
+\newcommand{\file}[1]{\texttt{\footnotesize #1}}
+
+% ── Métadonnées ─────────────────────────────────────────────
+\newcommand{\titreProjet}{Développement d'un Chatbot d'Assistance\\pour le Site de l'EST Fkih Ben Salah}
+\newcommand{\auteur}{[Votre Prénom et Nom]}
+\newcommand{\encadrant}{[Nom de l'Encadrant Pédagogique]}
+\newcommand{\annee}{2024 -- 2025}
+\newcommand{\filiere}{Informatique Décisionnelle et Statistiques}
+\newcommand{\diplo}{Diplôme Universitaire de Technologie (DUT)}
+
+% ════════════════════════════════════════════════════════════
+\begin{document}
+\onehalfspacing
+
+% ── PAGE DE GARDE ───────────────────────────────────────────
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture, overlay]
+  % Bande supérieure
+  \fill[primary] (current page.north west) rectangle
+    ([yshift=-3.2cm]current page.north east);
+  % Filet accent
+  \fill[accent] ([yshift=-3.2cm]current page.north west) rectangle
+    ([yshift=-3.6cm]current page.north east);
+  % Bande inférieure
+  \fill[primary] (current page.south west) rectangle
+    ([yshift=2.5cm]current page.south east);
+  \fill[accent] ([yshift=2.5cm]current page.south west) rectangle
+    ([yshift=2.9cm]current page.south east);
+\end{tikzpicture}
+
+\vspace*{-1.5cm}
+{\centering
+  \textcolor{white}{\large\bfseries Université Sultan Moulay Slimane}\\[3pt]
+  \textcolor{white}{\normalsize École Supérieure de Technologie de Fkih Ben Salah}\\[3pt]
+  \textcolor{white!80!gray}{\small Département Informatique}
+\par}
+
+\vspace{1.8cm}
+{\centering
+  \textcolor{primary}{\small\bfseries\MakeUppercase{Rapport de Projet de Fin d'Études}}\\[6pt]
+  \textcolor{accent}{\footnotesize\MakeUppercase{\diplo\ ---\ \filiere}}\\
+\par}
+
+\vspace{0.8cm}
+\begin{center}
+  \begin{tikzpicture}
+    \node[draw=accent, line width=2pt, rounded corners=8pt,
+          fill=lightgray, inner sep=16pt, text width=13cm, align=center]
+    {
+      \huge\bfseries\color{primary}\titreProjet
+    };
+  \end{tikzpicture}
+\end{center}
+
+\vspace{1.2cm}
+\begin{center}
+\begin{tikzpicture}
+  % Architecture RAG schématisée
+  \tikzstyle{box}=[draw=accent, fill=white, rounded corners=5pt,
+                   minimum width=2.4cm, minimum height=0.7cm, font=\small]
+  \tikzstyle{arr}=[-Stealth, thick, color=accent]
+  \node[box] (doc)  at (0,0)    {Documents};
+  \node[box] (emb)  at (3,0)    {Embeddings};
+  \node[box] (pine) at (6,0)    {Pinecone};
+  \node[box] (rag)  at (9,0)    {RAG + LLM};
+  \node[box] (user) at (12,0)   {Réponse};
+  \draw[arr] (doc)  -- (emb);
+  \draw[arr] (emb)  -- (pine);
+  \draw[arr] (pine) -- (rag);
+  \draw[arr] (rag)  -- (user);
+\end{tikzpicture}
+\end{center}
+
+\vspace{1.6cm}
+\begin{center}
+  \begin{tabular}{rl}
+    \textcolor{primary}{\bfseries Réalisé par :}     & \auteur \\[4pt]
+    \textcolor{primary}{\bfseries Encadrant :}       & \encadrant \\[4pt]
+    \textcolor{primary}{\bfseries Année universitaire :} & \annee \\
+  \end{tabular}
+\end{center}
+
+\vfill
+\begin{center}\textcolor{white}{\small EST Fkih Ben Salah --- Hay Tighnari, Route nationale N11, Fkih Ben Salah}\end{center}
+\end{titlepage}
+
+% ── PAGE DE DÉDICACE (optionnelle) ──────────────────────────
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{5cm}
+\begin{flushright}
+\itshape
+«~L'intelligence artificielle ne remplace pas\\
+l'intelligence humaine ; elle l'amplifie.~»\\[8pt]
+\upshape\small --- Fei-Fei Li
+\end{flushright}
+\cleardoublepage
+
+% ── REMERCIEMENTS ───────────────────────────────────────────
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+
+Au terme de ce projet de fin d'études, il m'est agréable d'adresser mes sincères remerciements à toutes les personnes qui ont contribué, de près ou de loin, à la réalisation de ce travail.
+
+Je tiens tout d'abord à exprimer ma profonde gratitude à \textbf{\encadrant}, mon encadrant pédagogique, pour son encadrement bienveillant, ses conseils avisés et sa disponibilité tout au long de ce projet. Ses orientations ont été d'une aide précieuse dans la conception et la mise en œuvre de l'application.
+
+Je remercie chaleureusement l'ensemble du corps enseignant et administratif de l'École Supérieure de Technologie de Fkih Ben Salah, et plus particulièrement les professeurs du département \textbf{Informatique Décisionnelle et Statistiques}, pour la qualité de la formation dispensée durant ces deux années.
+
+Mes remerciements vont également à la direction de l'EST FBS pour avoir mis à disposition les documents institutionnels nécessaires à la constitution de la base documentaire du chatbot.
+
+Enfin, je remercie profondément ma famille et mes amis pour leur soutien moral indéfectible et leurs encouragements constants qui m'ont permis de mener ce travail à son terme.
+
+\cleardoublepage
+
+% ── RÉSUMÉ (français) ───────────────────────────────────────
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+
+Ce projet de fin d'études a pour objectif la conception et le développement d'un chatbot d'assistance intelligent destiné au site web de l'École Supérieure de Technologie de Fkih Ben Salah (EST FBS). Face à la difficulté des étudiants et des candidats à trouver rapidement des informations fiables sur les formations, les procédures d'inscription et le règlement intérieur, le projet propose une solution conversationnelle basée sur le paradigme \term{Retrieval-Augmented Generation} (RAG).
+
+L'architecture mise en place repose sur une pile technologique moderne entièrement en Python : un backend \tech{FastAPI} expose les endpoints de l'application, un pipeline RAG orchestré par \tech{LangChain} interroge une base vectorielle \tech{Pinecone} alimentée par des embeddings \tech{Google Gemini}. Le modèle de langage \tech{Groq / Llama-3.3-70b-versatile} génère les réponses en language naturel, en s'appuyant strictement sur le contexte documentaire indexé. Chaque interaction est journalisée dans une base de données \tech{PostgreSQL} hébergée sur \tech{Supabase}. L'interface utilisateur est une application mono-page en HTML, CSS et JavaScript pur, au design moderne, avec indicateur de statut en temps réel et affichage des sources citées.
+
+Les résultats montrent la capacité du système à répondre précisément aux questions portant sur les filières, les conditions d'admission et le programme DUT, en citant les sources documentaires utilisées. Les perspectives incluent l'enrichissement de la base documentaire, le déploiement sur un serveur de production et l'ajout d'un mécanisme d'authentification.
+
+\vspace{0.8cm}
+\noindent\textbf{Mots-clés :} chatbot, RAG, LangChain, Pinecone, FastAPI, Groq, Gemini, intelligence artificielle, traitement du langage naturel, EST FBS.
+
+\cleardoublepage
+
+% ── ABSTRACT (anglais) ──────────────────────────────────────
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This final-year project aims at designing and developing an intelligent assistance chatbot for the website of the École Supérieure de Technologie de Fkih Ben Salah (EST FBS). Given the difficulty students and applicants face in quickly finding reliable information about programs, enrollment procedures, and institutional regulations, this project proposes a conversational solution based on the \term{Retrieval-Augmented Generation} (RAG) paradigm.
+
+The implemented architecture relies on a modern Python-based technology stack: a \tech{FastAPI} backend exposes the application endpoints, a RAG pipeline orchestrated by \tech{LangChain} queries a \tech{Pinecone} vector database populated with \tech{Google Gemini} embeddings. The \tech{Groq / Llama-3.3-70b-versatile} language model generates natural language responses, strictly grounded in the indexed document context. Each interaction is logged in a \tech{PostgreSQL} database hosted on \tech{Supabase}. The user interface is a single-page application built in pure HTML, CSS, and JavaScript, featuring a modern dark-themed design with a real-time status indicator and source citation display.
+
+Results demonstrate the system's ability to accurately answer questions about academic programs, admission requirements, and the DUT curriculum, while citing the referenced source documents. Future perspectives include enriching the document corpus, deploying to a production server, and adding an authentication mechanism.
+
+\vspace{0.8cm}
+\noindent\textbf{Keywords:} chatbot, RAG, LangChain, Pinecone, FastAPI, Groq, Gemini, artificial intelligence, natural language processing, EST FBS.
+
+\cleardoublepage
+
+% ── TABLE DES MATIÈRES ──────────────────────────────────────
+\tableofcontents
+\cleardoublepage
+
+% ── LISTE DES FIGURES ───────────────────────────────────────
+\listoffigures
+\addcontentsline{toc}{chapter}{Liste des figures}
+\cleardoublepage
+
+% ── LISTE DES TABLEAUX ──────────────────────────────────────
+\listoftables
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+\cleardoublepage
+
+% ── LISTE DES ABRÉVIATIONS ──────────────────────────────────
+\chapter*{Liste des abréviations}
+\addcontentsline{toc}{chapter}{Liste des abréviations}
+
+\begin{longtable}{>{\bfseries}p{3.5cm} p{10cm}}
+\toprule
+\textbf{Abréviation} & \textbf{Signification} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+API    & Application Programming Interface \\
+CORS   & Cross-Origin Resource Sharing \\
+CPU    & Central Processing Unit \\
+CRUD   & Create, Read, Update, Delete \\
+CSS    & Cascading Style Sheets \\
+DUT    & Diplôme Universitaire de Technologie \\
+ENV    & Environment Variable \\
+EST    & École Supérieure de Technologie \\
+EST FBS& École Supérieure de Technologie de Fkih Ben Salah \\
+FBS    & Fkih Ben Salah \\
+HTML   & HyperText Markup Language \\
+HTTP   & HyperText Transfer Protocol \\
+IA     & Intelligence Artificielle \\
+IDS    & Informatique Décisionnelle et Statistiques \\
+IHM    & Interface Homme-Machine \\
+JS     & JavaScript \\
+JSON   & JavaScript Object Notation \\
+LLM    & Large Language Model \\
+NLP    & Natural Language Processing \\
+ORM    & Object-Relational Mapping \\
+PDF    & Portable Document Format \\
+PFE    & Projet de Fin d'Études \\
+PgSQL  & PostgreSQL \\
+RAG    & Retrieval-Augmented Generation \\
+REST   & Representational State Transfer \\
+SPA    & Single-Page Application \\
+SQL    & Structured Query Language \\
+SVG    & Scalable Vector Graphics \\
+TXT    & Text (format fichier) \\
+URL    & Uniform Resource Locator \\
+USMS   & Université Sultan Moulay Slimane \\
+UUID   & Universally Unique Identifier \\
+WSGI   & Web Server Gateway Interface \\
+\end{longtable}
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  INTRODUCTION GÉNÉRALE
+% ════════════════════════════════════════════════════════════
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+\markboth{Introduction générale}{Introduction générale}
+
+L'essor fulgurant de l'intelligence artificielle et du traitement automatique du langage naturel a profondément transformé la manière dont les organisations interagissent avec leurs utilisateurs. Les agents conversationnels, ou chatbots, sont devenus des outils incontournables dans de nombreux secteurs, offrant une disponibilité permanente, une réactivité immédiate et la capacité de traiter un grand volume de requêtes simultanément.
+
+Dans le contexte de l'enseignement supérieur, les établissements font face à un défi récurrent : les étudiants et candidats peinent souvent à trouver rapidement et de manière autonome les informations dont ils ont besoin. Que ce soit pour connaître les conditions d'admission, comprendre le programme pédagogique ou accéder au règlement intérieur, les démarches sont parfois fastidieuses et chronophages.
+
+L'École Supérieure de Technologie de Fkih Ben Salah (EST FBS), composante de l'Université Sultan Moulay Slimane, n'échappe pas à cette problématique. Bien que son site web institutionnel fournisse des informations essentielles, celles-ci restent difficiles d'accès, dispersées et non interactives.
+
+C'est dans ce cadre que s'inscrit ce Projet de Fin d'Études, réalisé au titre du Diplôme Universitaire de Technologie en Informatique Décisionnelle et Statistiques. Il consiste à concevoir et développer un chatbot d'assistance intelligent basé sur l'architecture \term{Retrieval-Augmented Generation} (RAG), capable de répondre aux questions des utilisateurs en s'appuyant sur les documents officiels de l'école.
+
+Le présent rapport est structuré en cinq chapitres complémentaires :
+
+\begin{itemize}
+  \item Le \textbf{chapitre~1} présente le contexte général du projet, la problématique identifiée et les objectifs visés.
+  \item Le \textbf{chapitre~2} développe l'analyse et la spécification des besoins fonctionnels et non fonctionnels, les acteurs et les cas d'utilisation.
+  \item Le \textbf{chapitre~3} expose la conception architecturale du système, les diagrammes UML et le modèle de données.
+  \item Le \textbf{chapitre~4} détaille les phases de réalisation et de développement, les technologies employées et les modules implémentés.
+  \item Le \textbf{chapitre~5} présente la stratégie de test, les résultats, les limites du système et les perspectives d'amélioration.
+\end{itemize}
+
+Une conclusion générale synthétise les apports du projet et ouvre des pistes pour de futurs développements.
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CHAPITRE 1 — CONTEXTE GÉNÉRAL
+% ════════════════════════════════════════════════════════════
+\chapter{Contexte général du projet}
+
+\section{Présentation de l'EST Fkih Ben Salah}
+
+L'École Supérieure de Technologie de Fkih Ben Salah (EST FBS) est un établissement public d'enseignement supérieur créé par décision du Conseil du Gouvernement en date du \textbf{11 avril 2019}. Elle constitue une composante de l'Université Sultan Moulay Slimane (USMS) et a accueilli ses premiers étudiants en \textbf{septembre 2019}.
+
+Implantée sur le Hay Tighnari, Route nationale N11 de Casablanca, commune de Fkih Ben Salah (Boite Postale 336), l'EST FBS a pour vocation de proposer des formations à finalité professionnelle directement articulées avec les besoins du tissu économique régional et national.
+
+\subsection{Mission et valeurs}
+
+L'EST FBS poursuit quatre missions fondamentales :
+
+\begin{enumerate}
+  \item Offrir des formations en adéquation avec le milieu professionnel et le marché du travail.
+  \item Renouveler fréquemment les filières et enrichir les contenus pédagogiques.
+  \item Conduire des activités de recherche et d'innovation technologique en partenariat avec le secteur industriel.
+  \item Promouvoir la coopération régionale, nationale et internationale.
+\end{enumerate}
+
+\subsection{Offre de formation}
+
+L'établissement propose deux niveaux de diplômes, résumés dans le tableau~\ref{tab:formations}.
+
+\begin{table}[H]
+\centering
+\caption{Offre de formation de l'EST FBS}
+\label{tab:formations}
+\begin{tabularx}{\textwidth}{>{\bfseries}l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Diplôme} & \textbf{Filières} \\
+\midrule
+DUT (Bac+2)
+  & Génie Civil, Génie Minier, Génie Informatique, Génie Biologique,
+    Industrie Agroalimentaire, Agrochimie,
+    \textbf{Informatique Décisionnelle et Statistiques},
+    Géométallurgie et Géotechnique Minière, Chimie \& Techniques d'Analyse \\
+\midrule
+Licence Professionnelle (Bac+3)
+  & Techniques d'Irrigation et Énergies Renouvelables, Biotechnologies
+    Agroalimentaires, Génie Civil,
+    Informatique Décisionnelle et Statistiques, Sciences Agronomiques \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Contexte du projet}
+
+Dans le cadre du module de Projet de Fin d'Études de la deuxième année de DUT, filière Informatique Décisionnelle et Statistiques, ce projet est proposé en réponse à un besoin réel exprimé par l'institution : améliorer l'accès à l'information pour les étudiants et les candidats via une solution numérique innovante.
+
+L'augmentation du nombre d'étudiants inscrits à l'EST FBS, couplée à la diversification des filières proposées, génère un flux croissant de demandes d'informations répétitives adressées à l'administration. Une solution automatisée permettrait de décharger le personnel administratif tout en offrant une meilleure expérience utilisateur.
+
+\section{Problématique}
+
+L'analyse de la situation existante révèle plusieurs problèmes concrets :
+
+\begin{infobox}[Problèmes identifiés]
+\begin{itemize}
+  \item Les informations sur les formations, les admissions et le règlement sont dispersées sur plusieurs pages du site institutionnel.
+  \item Le site actuel n'offre aucune interface conversationnelle permettant des requêtes en langage naturel.
+  \item L'administration reçoit un volume important de questions redondantes pouvant être automatiquement traitées.
+  \item Les horaires d'ouverture de l'administration limitent la disponibilité du support étudiant.
+  \item Aucun outil de traçabilité des questions posées n'existe à ce jour.
+\end{itemize}
+\end{infobox}
+
+La problématique centrale peut donc se formuler ainsi : \textbf{Comment mettre à disposition des utilisateurs du site de l'EST FBS un assistant conversationnel capable de répondre précisément, en langage naturel et en temps réel, à leurs questions, en s'appuyant sur les documents officiels de l'établissement ?}
+
+\section{Objectifs du projet}
+
+Ce projet poursuit les objectifs suivants :
+
+\begin{table}[H]
+\centering
+\caption{Objectifs du projet}
+\label{tab:objectifs}
+\begin{tabularx}{\textwidth}{c >{\bfseries}l X}
+\toprule
+\rowcolor{primary!10}
+\# & Objectif & Description \\
+\midrule
+1 & Objectif principal & Développer un chatbot RAG fonctionnel répondant aux questions sur l'EST FBS \\
+2 & Indexation documentaire & Vectoriser les documents PDF et TXT officiels dans une base vectorielle \\
+3 & Interface web & Concevoir une IHM moderne, accessible et intuitive \\
+4 & API REST & Exposer le moteur RAG via une API FastAPI structurée \\
+5 & Journalisation & Enregistrer les interactions dans une base de données PostgreSQL \\
+6 & Maintenabilité & Permettre l'ajout aisé de nouveaux documents sans modifier le code \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Méthodologie adoptée}
+
+Le projet a été développé selon une approche \term{itérative et incrémentale}, proche du cadre agile, qui permet une adaptation progressive aux retours d'expérience. Les grandes phases sont les suivantes :
+
+\begin{enumerate}
+  \item \textbf{Phase d'analyse} : étude de l'existant, recueil des besoins, identification des acteurs.
+  \item \textbf{Phase de conception} : définition de l'architecture RAG, modélisation UML.
+  \item \textbf{Phase de développement} : implémentation du pipeline RAG, de l'API et du frontend.
+  \item \textbf{Phase d'indexation} : préparation et vectorisation des documents officiels.
+  \item \textbf{Phase de test} : validation fonctionnelle et tests de robustesse.
+  \item \textbf{Phase de documentation} : rédaction du rapport et des guides d'utilisation.
+\end{enumerate}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CHAPITRE 2 — ANALYSE ET SPÉCIFICATION DES BESOINS
+% ════════════════════════════════════════════════════════════
+\chapter{Analyse et spécification des besoins}
+
+\section{Étude de l'existant}
+
+Avant d'entamer la conception du chatbot, une analyse de l'existant a été menée afin d'identifier les solutions déjà en place et leurs limites.
+
+\subsection{Site institutionnel de l'EST FBS}
+
+Le site officiel \url{https://estfbs.usms.ac.ma} présente les informations suivantes : présentation de l'école, offre de formation, actualités et contacts. Cependant, cette solution statique souffre de plusieurs limitations : absence d'interactivité, navigation non contextuelle et absence de moteur de recherche interne efficace.
+
+\subsection{Solutions chatbot existantes}
+
+Deux grandes catégories de chatbots existent dans le domaine académique :
+
+\begin{table}[H]
+\centering
+\caption{Comparaison des approches de chatbot}
+\label{tab:comparaison-chatbots}
+\begin{tabularx}{\textwidth}{l X X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Critère} & \textbf{Chatbot basé sur règles} & \textbf{Chatbot RAG (retenu)} \\
+\midrule
+Flexibilité & Faible & Élevée \\
+Mise à jour & Manuelle et coûteuse & Réindexation automatique \\
+Précision & Limitée aux scénarios prévus & Basée sur les documents réels \\
+Maintenance & Complexe & Simple (ajout de fichiers) \\
+Coût de déploiement & Variable & Modèle cloud SaaS \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+L'architecture RAG a été retenue car elle permet de lier les réponses générées aux documents sources officiels, assurant ainsi fiabilité et traçabilité.
+
+\section{Analyse des besoins fonctionnels}
+
+Les besoins fonctionnels représentent les fonctionnalités que le système doit fournir :
+
+\begin{table}[H]
+\centering
+\caption{Besoins fonctionnels}
+\label{tab:besoins-fonctionnels}
+\begin{tabularx}{\textwidth}{c l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{ID} & \textbf{Fonctionnalité} & \textbf{Description} \\
+\midrule
+BF-01 & Poser une question & L'utilisateur saisit une question en langage naturel \\
+BF-02 & Obtenir une réponse & Le système retourne une réponse contextuelle générée par le LLM \\
+BF-03 & Afficher les sources & Les documents utilisés pour générer la réponse sont cités \\
+BF-04 & Questions suggérées & Des raccourcis thématiques orientent l'utilisateur \\
+BF-05 & Vérifier le statut API & L'interface indique si le backend est disponible \\
+BF-06 & Historique conversationnel & Les 6 derniers échanges sont transmis au RAG pour maintenir le contexte \\
+BF-07 & Indexer des documents & Un script permet d'ajouter de nouveaux PDF/TXT à la base vectorielle \\
+BF-08 & Journaliser les interactions & Chaque question-réponse est enregistrée en base de données \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Analyse des besoins non fonctionnels}
+
+\begin{table}[H]
+\centering
+\caption{Besoins non fonctionnels}
+\label{tab:besoins-nf}
+\begin{tabularx}{\textwidth}{c l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{ID} & \textbf{Propriété} & \textbf{Description} \\
+\midrule
+BNF-01 & Performance & Temps de réponse du RAG inférieur à 10 secondes (timeout configuré à 30~s) \\
+BNF-02 & Disponibilité & Service accessible 24h/24 après déploiement \\
+BNF-03 & Sécurité & Clés API stockées dans des variables d'environnement non commitées \\
+BNF-04 & Maintenabilité & Ajout de document par simple copie dans \file{data/} + réindexation \\
+BNF-05 & Portabilité & Application conteneurisable, indépendante du système d'exploitation \\
+BNF-06 & Extensibilité & Architecture modulaire permettant le remplacement des composants \\
+BNF-07 & Fiabilité & Réponses fondées exclusivement sur le corpus documentaire officiel \\
+BNF-08 & Convivialité & Interface intuitive en français, support multilingue affiché (FR/EN/AR) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Acteurs du système}
+
+Le système identifie deux acteurs principaux :
+
+\begin{itemize}
+  \item \textbf{Utilisateur (étudiant / candidat)} : interagit avec le chatbot via l'interface web pour poser des questions sur l'EST FBS.
+  \item \textbf{Administrateur} : gère la base documentaire (ajout, suppression) et lance le script d'indexation. Il surveille également les journaux d'interactions via Supabase.
+\end{itemize}
+
+\section{Cas d'utilisation}
+
+\subsection{Diagramme de cas d'utilisation}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small]
+  % Frontière système
+  \draw[draw=primary, line width=1.5pt, rounded corners=8pt]
+    (-0.5, -5.5) rectangle (10, 1.5);
+  \node[above, color=primary, font=\bfseries\small] at (4.75, 1.5) {Système Chatbot EST FBS};
+
+  % Acteur Utilisateur (dessiné manuellement sans tikzpicture imbriqué)
+  \draw[thick] (-2.2,-0.8) circle (0.22cm);
+  \draw[thick] (-2.2,-1.02) -- (-2.2,-1.6);
+  \draw[thick] (-2.5,-1.25) -- (-1.9,-1.25);
+  \draw[thick] (-2.2,-1.6) -- (-2.45,-2.0);
+  \draw[thick] (-2.2,-1.6) -- (-1.95,-2.0);
+  \node[font=\scriptsize\bfseries] at (-2.2,-2.3) {Utilisateur};
+
+  % Acteur Administrateur
+  \draw[thick] (12.2,-0.8) circle (0.22cm);
+  \draw[thick] (12.2,-1.02) -- (12.2,-1.6);
+  \draw[thick] (11.9,-1.25) -- (12.5,-1.25);
+  \draw[thick] (12.2,-1.6) -- (11.95,-2.0);
+  \draw[thick] (12.2,-1.6) -- (12.45,-2.0);
+  \node[font=\scriptsize\bfseries] at (12.2,-2.3) {Administrateur};
+
+  % Cas d'utilisation
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc1) at (4.75,  1.0) {Poser une question};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc2) at (4.75,  0.0) {Consulter les sources};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc3) at (4.75, -1.0) {Questions suggérées};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc4) at (4.75, -2.0) {Vérifier statut API};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc5) at (4.75, -3.0) {Indexer documents};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc6) at (4.75, -4.0) {Journaliser interaction};
+  \node[draw=accent, ellipse, fill=white, minimum width=4cm, minimum height=0.8cm, font=\small] (uc7) at (4.75, -5.0) {Consulter les logs};
+
+  % Liaisons utilisateur
+  \draw[-Stealth, color=primary] (-1.9,-1.4) -- (uc1);
+  \draw[-Stealth, color=primary] (-1.9,-1.4) -- (uc2);
+  \draw[-Stealth, color=primary] (-1.9,-1.4) -- (uc3);
+  \draw[-Stealth, color=primary] (-1.9,-1.4) -- (uc4);
+
+  % Liaisons admin
+  \draw[-Stealth, color=primary] (11.9,-1.4) -- (uc5);
+  \draw[-Stealth, color=primary] (11.9,-1.4) -- (uc6);
+  \draw[-Stealth, color=primary] (11.9,-1.4) -- (uc7);
+\end{tikzpicture}
+\caption{Diagramme de cas d'utilisation du chatbot EST FBS}
+\label{fig:uc}
+\end{figure}
+
+\subsection{Cahier des charges fonctionnel}
+
+\begin{table}[H]
+\centering
+\caption{Cahier des charges fonctionnel}
+\label{tab:cdc}
+\begin{tabularx}{\textwidth}{l l X l}
+\toprule
+\rowcolor{primary!10}
+\textbf{Fonction} & \textbf{Critère} & \textbf{Mesure} & \textbf{Priorité} \\
+\midrule
+Réponse pertinente & Précision & Basée sur top-3 chunks pertinents & Critique \\
+Temps de réponse & Performance & $<$ 10 secondes & Haute \\
+Affichage sources & Traçabilité & Nom du fichier source affiché & Haute \\
+Historique & Contexte & 6 derniers tours conservés & Moyenne \\
+Disponibilité & Uptime & Endpoint \texttt{/health} opérationnel & Haute \\
+Journalisation & Persistance & Sauvegarde dans \texttt{chat\_logs} & Haute \\
+Indexation & Mise à jour & Script CLI en une commande & Moyenne \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CHAPITRE 3 — CONCEPTION ET ARCHITECTURE
+% ════════════════════════════════════════════════════════════
+\chapter{Conception et architecture du système}
+
+\section{Architecture globale}
+
+Le système repose sur une architecture trois-tiers augmentée d'un pipeline RAG. La figure~\ref{fig:archi-globale} illustre les flux entre les composants.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  every node/.style={font=\small},
+  box/.style={draw=primary, fill=lightgray, rounded corners=6pt,
+              minimum width=3.2cm, minimum height=0.9cm, align=center},
+  cloud/.style={draw=accent, fill=accent!10, rounded corners=10pt,
+               minimum width=3cm, minimum height=0.9cm, align=center},
+  arr/.style={-Stealth, thick, color=accent},
+]
+  % Couche Présentation
+  \node[box, fill=primary!15] (browser) {Navigateur Web\\(\textit{index.html})};
+
+  % Couche Application
+  \node[box, right=2.2cm of browser, fill=accent!12] (fastapi) {FastAPI\\(\textit{main.py})};
+  \node[box, right=2.2cm of fastapi, fill=accent!12] (rag) {Pipeline RAG\\(\textit{rag.py})};
+
+  % Couche Données
+  \node[cloud, below=1.8cm of rag] (pinecone) {Pinecone\\Vector DB};
+  \node[cloud, below=1.8cm of fastapi] (groq) {Groq LLM\\(Llama 3.3)};
+  \node[cloud, below=1.8cm of browser] (supabase) {Supabase\\PostgreSQL};
+
+  % Script indexation
+  \node[box, above=1.5cm of pinecone, fill=ForestGreen!15] (loader) {load\_vectors.py\\(indexation)};
+  \node[box, above=1.5cm of loader, fill=ForestGreen!15] (docs) {Documents\\PDF / TXT};
+
+  % Flèches
+  \draw[arr] (browser) -- node[above]{\footnotesize POST /ask} (fastapi);
+  \draw[arr] (fastapi) -- (rag);
+  \draw[arr, <->] (rag) -- node[right]{\footnotesize retrieval} (pinecone);
+  \draw[arr] (rag) -- (groq);
+  \draw[arr] (fastapi) -- node[left]{\footnotesize log} (supabase);
+  \draw[arr] (docs) -- (loader);
+  \draw[arr] (loader) -- node[right]{\footnotesize upsert} (pinecone);
+
+  % Étiquettes de couches
+  \node[color=primary, font=\footnotesize\bfseries, rotate=90] at (-2.2, 0) {Présentation};
+  \node[color=primary, font=\footnotesize\bfseries, rotate=90] at (-2.2, -1.5) {Application};
+  \node[color=primary, font=\footnotesize\bfseries, rotate=90] at (-2.2, -3) {Données};
+\end{tikzpicture}
+\caption{Architecture globale du système chatbot}
+\label{fig:archi-globale}
+\end{figure}
+
+\section{Architecture logicielle}
+
+\subsection{Pipeline RAG}
+
+Le pipeline \term{Retrieval-Augmented Generation} suit les étapes décrites ci-dessous et illustrées en figure~\ref{fig:pipeline-rag} :
+
+\begin{enumerate}
+  \item L'utilisateur soumet une question via l'interface web.
+  \item La question est transmise à \tech{FastAPI} via un appel \texttt{POST /ask}.
+  \item Le service RAG (\file{rag.py}) vectorise la question avec les embeddings Gemini.
+  \item Les $k=3$ chunks les plus proches sémantiquement sont récupérés depuis Pinecone.
+  \item Le contexte documentaire et l'historique conversationnel (6 tours max) sont injectés dans un prompt structuré.
+  \item Le LLM Groq (Llama-3.3-70b-versatile) génère la réponse finale.
+  \item La réponse, accompagnée des noms de sources, est retournée au frontend et logguée dans Supabase.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.5cm and 1.8cm,
+  pstep/.style={draw=primary, fill=lightgray, rounded corners=5pt,
+               minimum width=2.8cm, minimum height=0.75cm, align=center, font=\scriptsize},
+  arr/.style={-Stealth, thick, color=accent},
+]
+  \node[pstep, fill=primary!15] (q)    {Question};
+  \node[pstep, right=of q]      (emb)  {Embedding\\Gemini};
+  \node[pstep, right=of emb]    (ret)  {Retrieval\\Pinecone (k=3)};
+  \node[pstep, right=of ret]    (ctx)  {Construction\\du contexte};
+  \node[pstep, right=of ctx]    (llm)  {LLM Groq\\Llama-3.3};
+  \node[pstep, right=of llm, fill=primary!15]    (rep)  {Réponse\\+ sources};
+
+  \draw[arr] (q) -- (emb);
+  \draw[arr] (emb) -- (ret);
+  \draw[arr] (ret) -- (ctx);
+  \draw[arr] (ctx) -- (llm);
+  \draw[arr] (llm) -- (rep);
+
+  % Historique
+  \node[pstep, below=1.2cm of ctx, fill=accent!12] (hist) {Historique\\(6 tours)};
+  \draw[arr] (hist.north) -- (ctx.south);
+\end{tikzpicture}
+\caption{Pipeline RAG du chatbot EST FBS}
+\label{fig:pipeline-rag}
+\end{figure}
+
+\section{Diagramme de classes}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small, every node/.style={align=center}]
+  % Classes
+  \node[draw=primary, fill=lightgray, rounded corners=3pt,
+        minimum width=5.5cm, text width=5.2cm] (question) at (0,0) {
+    \colorbox{primary}{\color{white}\textbf{Question (Pydantic)}}\\
+    \rule{5cm}{0.3pt}\\
+    question: str | None\\
+    text: str | None\\
+    history: list[dict]\\
+    \rule{5cm}{0.3pt}\\
+    normalized\_text() : str
+  };
+
+  \node[draw=primary, fill=lightgray, rounded corners=3pt,
+        minimum width=5.5cm, text width=5.2cm] (ragservice) at (7.5,0) {
+    \colorbox{primary}{\color{white}\textbf{RAGService}}\\
+    \rule{5cm}{0.3pt}\\
+    embeddings: GoogleGenerativeAI...\\
+    vector\_store: PineconeVectorStore\\
+    retriever: VectorStoreRetriever\\
+    llm: ChatGroq\\
+    prompt: ChatPromptTemplate\\
+    chain: Runnable\\
+    \rule{5cm}{0.3pt}\\
+    ask(question, history) : RAGResponse\\
+    \_format\_docs(docs) : str\\
+    \_format\_history(history) : str
+  };
+
+  \node[draw=primary, fill=lightgray, rounded corners=3pt,
+        minimum width=5.5cm, text width=5.2cm] (ragresponse) at (7.5,-5) {
+    \colorbox{primary}{\color{white}\textbf{RAGResponse (dataclass)}}\\
+    \rule{5cm}{0.3pt}\\
+    answer: str\\
+    sources: list[str]
+  };
+
+  \node[draw=primary, fill=lightgray, rounded corners=3pt,
+        minimum width=5.5cm, text width=5.2cm] (chatlog) at (0,-5) {
+    \colorbox{primary}{\color{white}\textbf{ChatLog (SQLAlchemy)}}\\
+    \rule{5cm}{0.3pt}\\
+    id: Integer (PK)\\
+    timestamp: DateTime\\
+    question: Text\\
+    reponse: Text\\
+    sources: Text
+  };
+
+  % Relations
+  \draw[-Stealth, color=accent] (question.east) -- node[above]{\scriptsize utilise} (ragservice.west);
+  \draw[-Stealth, color=accent] (ragservice.south) -- node[right]{\scriptsize retourne} (ragresponse.north);
+  \draw[-Stealth, color=accent] (ragresponse.west) -- node[above]{\scriptsize persiste dans} (chatlog.east);
+\end{tikzpicture}
+\caption{Diagramme de classes principal}
+\label{fig:classes}
+\end{figure}
+
+\section{Diagramme de séquence}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\scriptsize, scale=0.85, transform shape]
+  % Boîtes de cycle de vie
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (A) at (0,0) {Utilisateur};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (B) at (3,0) {Frontend};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (C) at (6,0) {FastAPI};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (D) at (9,0) {RAGService};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (E) at (12,0) {Pinecone};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (F) at (15,0) {Groq};
+  \node[draw=primary, fill=lightgray, rounded corners=2pt,
+        minimum width=2cm, minimum height=0.5cm, align=center] (G) at (18,0) {Supabase};
+
+  % Lignes de vie
+  \draw[dashed, color=gray!60]  (0,-0.3) -- (0,-8);
+  \draw[dashed, color=gray!60]  (3,-0.3) -- (3,-8);
+  \draw[dashed, color=gray!60]  (6,-0.3) -- (6,-8);
+  \draw[dashed, color=gray!60]  (9,-0.3) -- (9,-8);
+  \draw[dashed, color=gray!60] (12,-0.3) -- (12,-8);
+  \draw[dashed, color=gray!60] (15,-0.3) -- (15,-8);
+  \draw[dashed, color=gray!60] (18,-0.3) -- (18,-8);
+
+  % Messages
+  \draw[-Stealth, color=accent]      (0,-0.8)  -- node[above]{\tiny question}         (3,-0.8);
+  \draw[-Stealth, color=accent]      (3,-1.4)  -- node[above]{\tiny POST /ask}        (6,-1.4);
+  \draw[-Stealth, color=accent]      (6,-2.0)  -- node[above]{\tiny ask(q,hist)}      (9,-2.0);
+  \draw[-Stealth, color=accent]      (9,-2.6)  -- node[above]{\tiny embed+query}     (12,-2.6);
+  \draw[Stealth-, color=ForestGreen](9,-3.2)  -- node[above]{\tiny top-3 docs}      (12,-3.2);
+  \draw[-Stealth, color=accent]      (9,-3.8)  -- node[above]{\tiny prompt}          (15,-3.8);
+  \draw[Stealth-, color=ForestGreen](9,-4.4)  -- node[above]{\tiny réponse LLM}     (15,-4.4);
+  \draw[Stealth-, color=ForestGreen](6,-5.0)  -- node[above]{\tiny RAGResponse}      (9,-5.0);
+  \draw[-Stealth, color=accent]      (6,-5.6)  -- node[above]{\tiny log()}           (18,-5.6);
+  \draw[Stealth-, color=ForestGreen](3,-6.2)  -- node[above]{\tiny JSON(ans,src)}    (6,-6.2);
+  \draw[Stealth-, color=ForestGreen](0,-6.8)  -- node[above]{\tiny affichage}        (3,-6.8);
+\end{tikzpicture}
+\caption{Diagramme de séquence --- Flux principal de traitement d'une question}
+\label{fig:sequence}
+\end{figure}
+
+\section{Modèle de données}
+
+La base de données Supabase PostgreSQL contient une seule table \texttt{chat\_logs} dont la structure est décrite dans le tableau~\ref{tab:bdd}.
+
+\begin{table}[H]
+\centering
+\caption{Structure de la table \texttt{chat\_logs}}
+\label{tab:bdd}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Colonne} & \textbf{Type} & \textbf{Contrainte} & \textbf{Description} \\
+\midrule
+id        & INTEGER    & PRIMARY KEY, AUTO & Identifiant unique de l'interaction \\
+timestamp & TIMESTAMP  & DEFAULT now()     & Date et heure de l'échange \\
+question  & TEXT       & NOT NULL          & Question posée par l'utilisateur \\
+reponse   & TEXT       & NOT NULL          & Réponse générée par le chatbot \\
+sources   & TEXT       & NULLABLE          & Sources citées (noms de fichiers, séparés par des virgules) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Description des composants}
+
+\begin{table}[H]
+\centering
+\caption{Description des composants de l'application}
+\label{tab:composants}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Fichier} & \textbf{Rôle} & \textbf{Responsabilités} \\
+\midrule
+\file{app/main.py}            & Point d'entrée API      & Endpoints REST, gestion du cycle de vie, service CORS \\
+\file{app/rag.py}             & Moteur RAG              & Embeddings, retrieval Pinecone, génération LLM, formatage du contexte \\
+\file{app/database.py}        & Couche persistance      & Connexion Supabase, ORM SQLAlchemy, journalisation \\
+\file{scripts/load\_vectors.py} & Indexation documentaire & Chargement PDF/TXT, chunking, vectorisation, upsert Pinecone \\
+\file{index.html}             & Interface utilisateur   & SPA en HTML/CSS/JS, appels API, affichage des réponses et sources \\
+\file{.env.example}           & Configuration           & Template des variables d'environnement sensibles \\
+\file{requirements.txt}       & Dépendances             & Liste des paquets Python avec versions épinglées \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CHAPITRE 4 — RÉALISATION ET DÉVELOPPEMENT
+% ════════════════════════════════════════════════════════════
+\chapter{Réalisation et développement}
+
+\section{Environnement de développement}
+
+\subsection{Environnement matériel}
+
+\begin{table}[H]
+\centering
+\caption{Environnement matériel de développement}
+\label{tab:materiel}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Composant} & \textbf{Spécification} \\
+\midrule
+Processeur & Intel Core i5 / AMD Ryzen 5 (ou supérieur) \\
+Mémoire RAM & 8 Go minimum \\
+Espace disque & 5 Go (projet + environnement virtuel) \\
+Connexion & Internet requis (APIs cloud : Groq, Pinecone, Supabase, Gemini) \\
+Système d'exploitation & Windows 10/11, macOS ou Linux (Ubuntu 22.04+) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Environnement logiciel}
+
+\begin{table}[H]
+\centering
+\caption{Environnement logiciel utilisé}
+\label{tab:logiciel}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Outil} & \textbf{Version} & \textbf{Rôle} \\
+\midrule
+Python              & 3.11+              & Langage principal du backend \\
+pip                 & 23.x               & Gestionnaire de paquets \\
+FastAPI             & 0.135.1            & Framework web asynchrone \\
+Uvicorn             & 0.42.0             & Serveur ASGI \\
+LangChain           & 1.2.12             & Orchestration du pipeline RAG \\
+langchain-groq      & 1.1.2              & Intégration LLM Groq \\
+langchain-google-genai & 4.2.1           & Embeddings Gemini \\
+langchain-pinecone  & 0.2.13             & Connecteur Pinecone \\
+pinecone            & 7.3.0              & Client Python Pinecone \\
+pypdf               & 6.10.2             & Extraction texte PDF \\
+SQLAlchemy          & 2.0.48             & ORM Python \\
+psycopg2-binary     & 2.9.11             & Driver PostgreSQL \\
+pydantic            & 2.12.5             & Validation des données \\
+python-dotenv       & 1.2.2              & Gestion des variables d'environnement \\
+VS Code / PyCharm   & --                 & Éditeur de code \\
+Git                 & 2.x                & Contrôle de version \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Technologies utilisées}
+
+\subsection{Python et FastAPI}
+
+\tech{FastAPI} est un framework web Python haute performance, basé sur \tech{Starlette} et \tech{Pydantic}. Il offre la génération automatique de documentation Swagger, la validation des requêtes via Pydantic et la compatibilité avec les opérations asynchrones. L'API expose trois endpoints :
+
+\begin{itemize}
+  \item \texttt{GET /} : sert l'interface \file{index.html}.
+  \item \texttt{GET /health} : retourne l'état du service RAG.
+  \item \texttt{POST /ask} : reçoit une question et retourne une réponse RAG.
+\end{itemize}
+
+\subsection{LangChain et le pipeline RAG}
+
+\tech{LangChain} est un framework d'orchestration pour applications LLM. Dans ce projet, il est utilisé pour chaîner les composants suivants via l'opérateur pipe (\texttt{|}):
+
+\begin{lstlisting}[language=python3, caption={Chaîne RAG définie dans \texttt{rag.py}}]
+self.chain = self.prompt | self.llm | StrOutputParser()
+\end{lstlisting}
+
+Le prompt système est rédigé en français et contient trois variables dynamiques : l'historique, le contexte documentaire et la question.
+
+\subsection{Pinecone — Base vectorielle}
+
+\tech{Pinecone} est une base de données vectorielle hébergée dans le cloud. Le projet y stocke les vecteurs des chunks documentaires. Les chunks sont identifiés par leur empreinte MD5 pour éviter les doublons lors des réindexations.
+
+Paramètres de chunking :
+
+\begin{table}[H]
+\centering
+\caption{Paramètres du découpage textuel}
+\label{tab:chunking}
+\begin{tabular}{ll}
+\toprule
+\textbf{Paramètre} & \textbf{Valeur} \\
+\midrule
+Taille du chunk     & 1\,000 caractères \\
+Chevauchement (overlap) & 150 caractères \\
+Stratégie & RecursiveCharacterTextSplitter \\
+Taille des batchs upsert & 100 vecteurs \\
+Nombre de voisins (k) & 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Google Gemini Embeddings}
+
+Le modèle \texttt{models/gemini-embedding-001} de Google est utilisé pour transformer les chunks textuels en vecteurs denses. Ce modèle produit des embeddings de haute qualité pour le français.
+
+\subsection{Groq --- LLM d'inférence}
+
+\tech{Groq} est une plateforme d'inférence LLM à très faible latence. Le modèle \texttt{llama-3.3-70b-versatile} est utilisé avec les paramètres suivants :
+
+\begin{table}[H]
+\centering
+\caption{Paramètres du LLM Groq}
+\label{tab:llm}
+\begin{tabular}{ll}
+\toprule
+\textbf{Paramètre} & \textbf{Valeur} \\
+\midrule
+Modèle         & \texttt{llama-3.3-70b-versatile} \\
+Température    & 0.3 (réponses factuelles) \\
+Timeout        & 30 secondes \\
+Type           & Chat Completion \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Supabase PostgreSQL}
+
+\tech{Supabase} fournit une instance PostgreSQL managée dans le cloud. La connexion est établie via \tech{SQLAlchemy} avec l'option \texttt{pool\_pre\_ping=True} pour la résilience des connexions.
+
+\section{Structure du projet}
+
+\begin{lstlisting}[language={}, caption={Arborescence du projet}, label={lst:arbo}]
+estfbs_assist/
+|-- app/
+|   |-- main.py          # Entrypoint FastAPI (136 lignes)
+|   |-- rag.py           # Pipeline RAG (138 lignes)
+|   +-- database.py      # Couche persistance (89 lignes)
+|-- data/
+|   |-- description_donnees_reglement_EST_FBS.pdf  (98 Ko)
+|   |-- CNPN_Diplome_Universitaire_de_Technologie.pdf (390 Ko)
+|   +-- presentation.txt  (1,5 Ko)
+|-- scripts/
+|   +-- load_vectors.py   # Indexation (87 lignes)
+|-- index.html            # SPA Frontend (1171 lignes)
+|-- requirements.txt      # 15 dependances Python
+|-- .env.example          # Template configuration
++-- README.md
+\end{lstlisting}
+
+\section{Description des modules développés}
+
+\subsection{Module API --- \file{app/main.py}}
+
+Ce module constitue le point d'entrée de l'application. Il initialise le service RAG et la base de données au démarrage via le gestionnaire de contexte asynchrone \texttt{lifespan}, puis expose les endpoints REST. La validation des entrées est assurée par le modèle Pydantic \texttt{Question}.
+
+\begin{lstlisting}[language=python3, caption={Endpoint principal \texttt{POST /ask}}, label={lst:ask}]
+@app.post("/ask")
+def poser_question(q: Question) -> dict[str, Any]:
+    """Answer a student question and log the interaction."""
+    if rag_service is None:
+        raise HTTPException(status_code=503,
+                           detail="RAG service is not initialized.")
+    try:
+        question = q.normalized_text()
+        result = rag_service.ask(question, q.history)
+        log_interaction(question, result.answer, result.sources)
+        return {"answer": result.answer,
+                "reponse": result.answer,
+                "sources": result.sources}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+\end{lstlisting}
+
+\subsection{Module RAG --- \file{app/rag.py}}
+
+Ce module contient la classe \texttt{RAGService} qui encapsule l'intégralité du pipeline RAG. Son constructeur initialise les quatre composants principaux : embeddings, vector store, LLM et chaîne de traitement.
+
+\begin{lstlisting}[language=python3, caption={Prompt système du RAG en français}, label={lst:prompt}]
+self.prompt = ChatPromptTemplate.from_template(
+    """Tu es l'assistant virtuel officiel de l'EST Fquih Ben Salah.
+Ton role est d'aider les etudiants en repondant a leurs questions.
+Utilise uniquement le contexte fourni ci-dessous pour repondre.
+Si la reponse ne se trouve pas dans le contexte, dis politement
+que tu ne sais pas et conseille de contacter l'administration.
+
+Historique de conversation:
+{history}
+
+Contexte extrait des documents:
+{context}
+
+Question de l'etudiant:
+{question}
+
+Reponse:"""
+)
+\end{lstlisting}
+
+\subsection{Module Base de données --- \file{app/database.py}}
+
+Ce module gère la persistance des interactions via SQLAlchemy. Il implémente un pattern singleton pour la gestion du moteur de connexion et de la session factory.
+
+\subsection{Script d'indexation --- \file{scripts/load\_vectors.py}}
+
+Ce script autonome prend en charge le chargement des documents dans Pinecone. Il lit les fichiers PDF et TXT du répertoire \file{data/}, les découpe en chunks, génère leurs embeddings et les insère par batch de 100 dans Pinecone. L'identification des chunks par empreinte MD5 assure l'idempotence des réindexations.
+
+\subsection{Frontend --- \file{index.html}}
+
+L'interface utilisateur est une Single-Page Application (SPA) réalisée en HTML, CSS et JavaScript vanille (1\,171 lignes). Ses caractéristiques principales sont :
+
+\begin{itemize}
+  \item Design sombre à gradient bleu/violet avec variables CSS (\texttt{:root}).
+  \item Sidebar de navigation avec 6 questions suggérées (admissions, formations, campus).
+  \item Zone de chat avec indicateur de frappe animé (\textit{typing dots}).
+  \item Indicateur de statut temps réel (vert = en ligne / rouge = hors ligne).
+  \item Affichage du nombre de segments vectorisés et du modèle LLM actif.
+  \item Gestion de la touche Entrée pour l'envoi, auto-redimensionnement du textarea.
+  \item Affichage des sources sous forme de \textit{chips} colorés.
+  \item Compatibilité multilingue affichée : FR, EN, AR.
+\end{itemize}
+
+\section{Implémentation du chatbot}
+
+\subsection{Flux de traitement d'une question}
+
+Voici le code JavaScript qui gère l'envoi d'une question et l'affichage de la réponse :
+
+\begin{lstlisting}[language=javascript, caption={Fonction principale d'envoi de question (index.html)}, label={lst:frontend-send}]
+async function sendQuestion(rawQuestion) {
+  const question = rawQuestion.trim();
+  if (!question || state.waiting) return;
+
+  hideWelcome();
+  addMessage('user', question);
+  els.input.value = '';
+  setWaiting(true);
+  addTypingIndicator();
+
+  try {
+    const result = await postQuestion(question);
+    removeTypingIndicator();
+    addMessage('bot', result.answer, result.sources);
+    state.history.push({ user: question, bot: result.answer });
+    state.history = state.history.slice(-10);
+  } catch (error) {
+    removeTypingIndicator();
+    addMessage('bot', 'Impossible de joindre l API EST FBS...');
+  } finally {
+    setWaiting(false);
+    els.input.focus();
+  }
+}
+\end{lstlisting}
+
+\section{Gestion des données}
+
+\subsection{Documents indexés}
+
+\begin{table}[H]
+\centering
+\caption{Documents du corpus documentaire}
+\label{tab:documents}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Fichier} & \textbf{Type} & \textbf{Taille} & \textbf{Contenu} \\
+\midrule
+\file{presentation.txt} & TXT & 1,5 Ko & Présentation EST FBS, filières, contacts \\
+\file{description\_donnees\_reglement\_EST\_FBS.pdf} & PDF & 98 Ko & Règlement intérieur, données administratives \\
+\file{CNPN\_Diplôme Universitaire de Technologie.pdf} & PDF & 390 Ko & Programme national DUT (CNPN) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Difficultés rencontrées et solutions apportées}
+
+\begin{table}[H]
+\centering
+\caption{Difficultés et solutions}
+\label{tab:difficultes}
+\begin{tabularx}{\textwidth}{X X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Difficulté} & \textbf{Solution apportée} \\
+\midrule
+Extraction de texte depuis des PDFs de faible qualité & Utilisation de \texttt{PyPDFLoader} de LangChain-Community avec \texttt{pypdf} 6.x \\
+Déduplication lors des réindexations répétées & Identifiants de vecteurs basés sur l'empreinte MD5 du contenu des chunks \\
+Gestion du contexte multi-tours & Transmission des 6 derniers échanges dans le prompt, formatés comme texte structuré \\
+Compatibilité du champ question (\texttt{question}/\texttt{text}) & Modèle Pydantic avec deux champs optionnels et méthode \texttt{normalized\_text()} \\
+Initialisation asynchrone des services & Pattern \texttt{lifespan} de FastAPI pour l'initialisation au démarrage \\
+Connexions DB instables & Option \texttt{pool\_pre\_ping=True} dans SQLAlchemy \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CHAPITRE 5 — TESTS, LIMITES ET PERSPECTIVES
+% ════════════════════════════════════════════════════════════
+\chapter{Tests, limites et perspectives}
+
+\section{Stratégie de test}
+
+Les tests ont été menés selon trois niveaux complémentaires :
+
+\begin{enumerate}
+  \item \textbf{Tests unitaires manuels} : vérification de chaque composant isolément (chargement des documents, connexion aux APIs, validation Pydantic).
+  \item \textbf{Tests fonctionnels} : validation des scénarios principaux via l'interface et via des requêtes HTTP directes.
+  \item \textbf{Tests de robustesse} : envoi de questions hors périmètre, de questions vides et de requêtes malformées.
+\end{enumerate}
+
+\section{Tests fonctionnels}
+
+\begin{table}[H]
+\centering
+\caption{Résultats des tests fonctionnels}
+\label{tab:tests}
+\begin{tabularx}{\textwidth}{c l X c}
+\toprule
+\rowcolor{primary!10}
+\textbf{ID} & \textbf{Scénario} & \textbf{Résultat attendu} & \textbf{Statut} \\
+\midrule
+TF-01 & Question sur les formations DUT & Liste des filières avec descriptions & \textcolor{ForestGreen}{\checkmark} \\
+TF-02 & Conditions d'admission & Critères d'admission selon le règlement & \textcolor{ForestGreen}{\checkmark} \\
+TF-03 & Localisation de l'école & Adresse complète et contact & \textcolor{ForestGreen}{\checkmark} \\
+TF-04 & Question hors périmètre & Message poli invitant à contacter l'administration & \textcolor{ForestGreen}{\checkmark} \\
+TF-05 & Question vide & Erreur HTTP 400 & \textcolor{ForestGreen}{\checkmark} \\
+TF-06 & Endpoint \texttt{/health} & JSON avec statut, modèle, chunk\_count & \textcolor{ForestGreen}{\checkmark} \\
+TF-07 & Question multi-tours & Cohérence contextuelle sur 3 échanges & \textcolor{ForestGreen}{\checkmark} \\
+TF-08 & Affichage des sources & Noms de fichiers sources affichés & \textcolor{ForestGreen}{\checkmark} \\
+TF-09 & Journalisation Supabase & Entrée créée dans \texttt{chat\_logs} & \textcolor{ForestGreen}{\checkmark} \\
+TF-10 & Service indisponible (rag=None) & Erreur HTTP 503 & \textcolor{ForestGreen}{\checkmark} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Analyse des performances}
+
+\begin{table}[H]
+\centering
+\caption{Indicateurs de performance}
+\label{tab:perfs}
+\begin{tabular}{l r l}
+\toprule
+\textbf{Métrique} & \textbf{Valeur mesurée} & \textbf{Commentaire} \\
+\midrule
+Chunks dans Pinecone (corpus initial) & $\approx$ 29 & 3 documents indexés \\
+Temps de retrieval Pinecone             & $< 0.5$~s   & API cloud \\
+Temps d'inférence Groq                  & $1$--$4$~s  & Latence Groq API \\
+Temps total (question $\to$ réponse)    & $2$--$8$~s  & Dépend du réseau \\
+Timeout configuré                       & $30$~s      & \texttt{request\_timeout} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Limites du système}
+
+Plusieurs limites ont été identifiées lors des phases de test :
+
+\begin{itemize}
+  \item \textbf{Limite du corpus} : Les réponses sont strictement limitées aux documents indexés. Un document manquant ou mal extrait entraîne une réponse incomplète.
+  \item \textbf{Qualité de l'extraction PDF} : L'extraction textuelle des PDFs scannés ou complexes (tableaux, colonnes) peut être imparfaite.
+  \item \textbf{Configuration CORS restrictive} : Le middleware CORS ne permet que les requêtes depuis \texttt{localhost:3000}, ce qui bloque les déploiements en production sans modification.
+  \item \textbf{Absence de tests automatisés} : Le projet ne contient pas de suite de tests unitaires ou d'intégration formelle (pytest).
+  \item \textbf{Dépendance aux APIs tierces} : Le système requiert la disponibilité simultanée de quatre services cloud (Groq, Pinecone, Gemini, Supabase).
+  \item \textbf{Pas d'authentification} : L'API est accessible sans authentification, ce qui peut poser des problèmes en production.
+  \item \textbf{Stockage des sources} : Les sources sont stockées sous forme de chaîne texte dans la colonne \texttt{sources} de la table \texttt{chat\_logs}, ce qui limite les requêtes analytiques.
+\end{itemize}
+
+\section{Perspectives d'amélioration}
+
+\begin{table}[H]
+\centering
+\caption{Pistes d'amélioration futures}
+\label{tab:perspectives}
+\begin{tabularx}{\textwidth}{c l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Priorité} & \textbf{Amélioration} & \textbf{Description} \\
+\midrule
+Haute & Enrichissement du corpus & Indexer l'ensemble du site web, les emplois du temps et les actualités \\
+Haute & Déploiement production & Dockerisation + déploiement sur Railway, Render ou serveur USMS \\
+Haute & Tests automatisés & Mise en place d'une suite pytest avec mocks des APIs tierces \\
+Moyenne & Authentification & Ajout d'un système de tokens JWT pour sécuriser l'API \\
+Moyenne & CORS dynamique & Configuration CORS basée sur des origines autorisées (env variable) \\
+Moyenne & Tableau de bord & Interface d'administration pour visualiser les logs et les statistiques \\
+Faible & Support arabe & Amélioration du support de la langue arabe pour les étudiants \\
+Faible & Évaluation RAG & Métriques RAGAS (faithfulness, relevance) pour évaluer la qualité \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  CONCLUSION GÉNÉRALE
+% ════════════════════════════════════════════════════════════
+\chapter*{Conclusion générale}
+\addcontentsline{toc}{chapter}{Conclusion générale}
+\markboth{Conclusion générale}{Conclusion générale}
+
+Ce projet de fin d'études avait pour ambition de concevoir et développer un chatbot d'assistance intelligent pour l'École Supérieure de Technologie de Fkih Ben Salah, en réponse à un besoin réel d'amélioration de l'accès à l'information pour les étudiants et les candidats.
+
+Le système développé repose sur l'architecture \term{Retrieval-Augmented Generation} (RAG), qui combine la puissance des grands modèles de langage avec la précision de la recherche vectorielle. Cette approche garantit que les réponses générées sont ancrées dans les documents officiels de l'établissement, assurant ainsi leur fiabilité et leur traçabilité.
+
+L'ensemble des objectifs initiaux ont été atteints : le pipeline RAG est opérationnel, l'API FastAPI expose les fonctionnalités requises, l'interface web offre une expérience utilisateur moderne et intuitive, et chaque interaction est journalisée dans la base de données cloud Supabase.
+
+D'un point de vue technique, ce projet a permis de mettre en pratique de nombreuses compétences acquises durant la formation DUT en Informatique Décisionnelle et Statistiques : programmation Python avancée, conception d'APIs REST, intégration de services cloud, manipulation de bases de données relationnelles et vectorielles, et développement frontend.
+
+Les perspectives d'évolution sont nombreuses et prometteuses : enrichissement du corpus documentaire, déploiement en production sur l'infrastructure de l'USMS, ajout d'un mécanisme d'authentification et mise en place d'un tableau de bord analytique pour l'administration.
+
+Ce projet illustre concrètement comment l'intelligence artificielle et le traitement du langage naturel peuvent être mobilisés au service des établissements d'enseignement supérieur pour améliorer l'expérience étudiante et optimiser les processus administratifs.
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  BIBLIOGRAPHIE
+% ════════════════════════════════════════════════════════════
+\chapter*{Bibliographie}
+\addcontentsline{toc}{chapter}{Bibliographie}
+\markboth{Bibliographie}{Bibliographie}
+
+\begin{enumerate}
+  \item \textbf{Lewis, P., Perez, E., et al.} (2020). \textit{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}. NeurIPS 2020. \url{https://arxiv.org/abs/2005.11401}
+
+  \item \textbf{Documentation officielle FastAPI}. Tiangolo, S. \url{https://fastapi.tiangolo.com}
+
+  \item \textbf{Documentation LangChain}. LangChain, Inc. \url{https://python.langchain.com}
+
+  \item \textbf{Pinecone Documentation}. Pinecone Systems, Inc. \url{https://docs.pinecone.io}
+
+  \item \textbf{Groq Documentation}. Groq, Inc. \url{https://console.groq.com/docs}
+
+  \item \textbf{Google Gemini Embeddings}. Google DeepMind. \url{https://ai.google.dev/gemini-api/docs/embeddings}
+
+  \item \textbf{Supabase Documentation}. Supabase, Inc. \url{https://supabase.com/docs}
+
+  \item \textbf{SQLAlchemy Documentation}. \url{https://docs.sqlalchemy.org}
+
+  \item \textbf{Pydantic Documentation}. Pydantic Services Inc. \url{https://docs.pydantic.dev}
+
+  \item \textbf{Site officiel de l'EST Fkih Ben Salah}. Université Sultan Moulay Slimane. \url{https://estfbs.usms.ac.ma}
+
+  \item \textbf{CNPN DUT --- Diplôme Universitaire de Technologie}. Cahier National des Normes Pédagogiques. Ministère de l'Enseignement Supérieur du Maroc.
+
+  \item \textbf{Vaswani, A., et al.} (2017). \textit{Attention is All You Need}. NeurIPS 2017. \url{https://arxiv.org/abs/1706.03762}
+\end{enumerate}
+
+\cleardoublepage
+
+% ════════════════════════════════════════════════════════════
+%  ANNEXES
+% ════════════════════════════════════════════════════════════
+\appendix
+\chapter{Variables d'environnement}
+
+Le fichier \file{.env} (jamais commité) doit contenir les variables suivantes :
+
+\begin{lstlisting}[language={}, caption={Contenu du fichier .env.example}, label={lst:env}]
+GOOGLE_API_KEY=your_google_ai_studio_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+PINECONE_API_KEY=your_pinecone_api_key_here
+PINECONE_INDEX_NAME=your_pinecone_index_name_here
+DATABASE_URL=your_supabase_postgres_connection_string_here
+\end{lstlisting}
+
+\chapter{Guide d'installation et de démarrage}
+
+\begin{lstlisting}[language={}, caption={Commandes d'installation}, label={lst:install}]
+# 1. Cloner le depot
+git clone https://github.com/zorvex13/estfbs_assist.git
+cd estfbs_assist
+
+# 2. Creer et activer un environnement virtuel
+python -m venv venv
+source venv/bin/activate    # Linux/macOS
+# venv\Scripts\activate     # Windows
+
+# 3. Installer les dependances
+pip install -r requirements.txt
+
+# 4. Copier et remplir le fichier de configuration
+cp .env.example .env
+# Editer .env avec les cles API
+
+# 5. Indexer les documents dans Pinecone
+python scripts/load_vectors.py
+
+# 6. Lancer le serveur FastAPI
+uvicorn app.main:app --reload
+
+# L'application est accessible a http://localhost:8000
+\end{lstlisting}
+
+\chapter{Endpoints de l'API --- Documentation Swagger}
+
+FastAPI génère automatiquement une documentation Swagger accessible à l'adresse \url{http://localhost:8000/docs}. Le tableau~\ref{tab:endpoints} récapitule les endpoints disponibles.
+
+\begin{table}[H]
+\centering
+\caption{Endpoints de l'API FastAPI}
+\label{tab:endpoints}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+\rowcolor{primary!10}
+\textbf{Méthode} & \textbf{Endpoint} & \textbf{Code} & \textbf{Description} \\
+\midrule
+GET  & \texttt{/}       & 200 & Retourne l'interface web HTML \\
+GET  & \texttt{/health} & 200 & État du service (ok, model, chunk\_count) \\
+POST & \texttt{/ask}    & 200 & Traite une question et retourne une réponse RAG \\
+POST & \texttt{/ask}    & 400 & Question vide ou invalide \\
+POST & \texttt{/ask}    & 503 & Service RAG non initialisé \\
+POST & \texttt{/ask}    & 500 & Erreur interne du service IA \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\chapter{Diagrammes PlantUML}
+
+Les diagrammes suivants sont fournis en code PlantUML pour une intégration dans des outils de documentation.
+
+\begin{lstlisting}[language={}, caption={Diagramme de séquence PlantUML}, label={lst:plantuml}]
+@startuml
+actor Utilisateur
+participant "Frontend\n(index.html)" as FE
+participant "FastAPI\n(main.py)" as API
+participant "RAGService\n(rag.py)" as RAG
+participant "Pinecone" as PC
+participant "Groq LLM" as LLM
+database "Supabase\nPostgreSQL" as DB
+
+Utilisateur -> FE: Saisit une question
+FE -> API: POST /ask {question, history}
+API -> RAG: ask(question, history)
+RAG -> PC: embed + similarity_search(k=3)
+PC --> RAG: top-3 chunks
+RAG -> LLM: prompt(history, context, question)
+LLM --> RAG: reponse generee
+RAG --> API: RAGResponse(answer, sources)
+API -> DB: log_interaction()
+API --> FE: JSON {answer, sources}
+FE --> Utilisateur: Affiche reponse + sources
+@enduml
+\end{lstlisting}
+
+\begin{lstlisting}[language={}, caption={Diagramme de classes PlantUML}, label={lst:plantuml-classes}]
+@startuml
+class Question {
+  +question: str | None
+  +text: str | None
+  +history: list[dict]
+  +normalized_text(): str
+}
+
+class RAGService {
+  +embeddings: GoogleGenerativeAIEmbeddings
+  +vector_store: PineconeVectorStore
+  +retriever: VectorStoreRetriever
+  +llm: ChatGroq
+  +prompt: ChatPromptTemplate
+  +chain: Runnable
+  +ask(question, history): RAGResponse
+  -_format_docs(docs): str
+  -_format_history(history): str
+}
+
+class RAGResponse {
+  +answer: str
+  +sources: list[str]
+}
+
+class ChatLog {
+  +id: int
+  +timestamp: datetime
+  +question: str
+  +reponse: str
+  +sources: str
+}
+
+Question --> RAGService : utilise
+RAGService --> RAGResponse : retourne
+ChatLog ..|> RAGResponse : persiste
+@enduml
+\end{lstlisting}
+
+\end{document}
