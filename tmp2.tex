@@ -184,24 +184,7 @@
 
 \vspace{0.8cm}
 % Pipeline RAG miniature en TikZ ajusté pour la largeur de page
-\begin{center}
-\begin{tikzpicture}[scale=0.9, transform shape]
-  \tikzstyle{box}=[draw=accent, fill=white, rounded corners=4pt,
-                   minimum width=2.1cm, minimum height=0.7cm, font=\scriptsize\bfseries\color{primary}]
-  \tikzstyle{arr}=[-Stealth, thick, color=accent]
-  
-  \node[box] (doc)  at (0,0)    {Documents};
-  \node[box] (emb)  at (2.8,0)  {Embeddings};
-  \node[box] (pine) at (5.6,0)  {Pinecone};
-  \node[box] (rag)  at (8.4,0)  {Groq / Llama};
-  \node[box] (user) at (11.2,0) {Interface Web};
-  
-  \draw[arr] (doc)  -- (emb);
-  \draw[arr] (emb)  -- (pine);
-  \draw[arr] (pine) -- (rag);
-  \draw[arr] (rag) -- (user);
-\end{tikzpicture}
-\end{center}
+
 
 \vspace{1.2cm}
 \begin{center}
@@ -235,32 +218,78 @@
 \pagenumbering{roman}
 \chapter*{Remerciements}
 \addcontentsline{toc}{chapter}{Remerciements}
-Texte des remerciements ici.
+Nous dédions ce travail à nos familles, en particulier à nos parents, pour leur soutien constant tout au long de notre parcours scolaire, leurs encouragements à poursuivre nos études supérieures, ainsi que pour leur amour, leur confiance et leurs sacrifices.
+
+À nos enseignants, pour leur aide, leurs conseils et les connaissances qu’ils nous ont apportées durant notre formation.
+
+Nous adressons nos sincères remerciements à notre encadrant  pour son \newline accompagnement, ses conseils précieux et son soutien tout au long de la réalisation de ce projet. Sa disponibilité et ses orientations ont été essentielles à l’avancement et à l’aboutissement de ce travail.
+
+À nos amis, pour leur soutien, leur compréhension et leur présence dans les moments difficiles.
+
+À nos collègues des filières IDS et GI, qui nous ont accompagnés et soutenus lors des examens, des travaux pratiques et tout au long de nos études.
+
+Enfin, à toutes les personnes qui ont contribué, de près ou de loin, à la réalisation de ce projet. Nous leur adressons nos sincères remerciements et notre profonde gratitude.
 
 \newpage
+
+Nous souhaitons tout d'abord exprimer notre profonde gratitude envers Dieu le Tout-Puissant, qui nous a accordé l'énergie, la patience et la volonté nécessaires pour mener à bien ce modeste travail.
+
+Nous tenons à adresser nos plus vifs remerciements à notre encadrant Monsieur \newline le Dr. AIT DAOUD Rachid, pour l'aide précieuse qu'il nous a apportée tout au long de ce projet. Ses qualités humaines et professionnelles, sa disponibilité, ses conseils avisés et ses orientations pertinentes nous ont guidés à chaque étape de ce travail. Monsieur, nous vous exprimons notre profonde reconnaissance et notre sincère gratitude pour tout le temps et les efforts que vous avez consacrés à notre encadrement.
+
+Nous souhaitons également remercier sincèrement tous les professeurs de l'École Supérieure de Technologie de Fquih Ben Salah qui nous ont enseigné et soutenu tout au long de notre formation. Leurs compétences et leur dévouement ont été une source d'inspiration et ont largement contribué à notre réussite académique.
+
+Nous remercions également la direction de l’EST FBS, notre chef de filière, Monsieur R. AIT DAOUD, ainsi que le vice-directeur, Professeur A. AMINE, pour avoir mis à notre disposition les documents officiels nécessaires à la réalisation de ce projet.
+
+Enfin, nous remercions du fond du cœur nos familles et nos amis pour leur soutien moral constant, leur patience et leurs encouragements tout au long de cette période.
+
+
+Nous remercions également toutes les personnes qui ont contribué de près ou de loin à la réalisation de ce travail.
 
 \chapter*{Résumé}
 \addcontentsline{toc}{chapter}{Résumé}
-Résumé du projet ici.
+
+Ce projet de fin d'études présente la conception et le développement d'un chatbot d'assistance intelligent destiné au site web de l'École Supérieure de Technologie de Fquih Ben Salah (EST FBS). 
+
+Face au manque d'interactivité du site actuel de l'école et au volume important de questions répétitives adressées à l'administration, nous avons proposé une solution conversationnelle basée sur l'architecture RAG (Retrieval-Augmented Generation). Cette architecture permet de combiner la recherche dans une base de données vectorielle avec la génération de réponses par un grand modèle de langage, afin de produire des réponses précises et fiables basées uniquement sur les documents officiels de l'école. Sur le plan technique, le système repose sur FastAPI pour le backend, LangChain pour l'orchestration du pipeline RAG, Pinecone comme base vectorielle, Google Gemini pour la génération des embeddings, et le modèle Llama-3.3-70b via Groq pour la génération des réponses.
+
+Les interactions des utilisateurs sont journalisées dans une base de données PostgreSQL hébergée sur Supabase, et l'interface utilisateur est développée en HTML, CSS et JavaScript. 
+Les tests réalisés ont montré que le système répond correctement aux questions portant sur les filières, les conditions d'admission et le règlement intérieur de l'école, avec un temps de réponse moyen de 3 à 6 secondes. Ce projet constitue une solution concrète et moderne pour améliorer l'accès à l'information au sein de l'établissement.
+
+\textbf{Mots-clés :} Chatbot, RAG, LangChain, Pinecone, FastAPI, Groq, Gemini, Intelligence Artificielle, Traitement du Langage Naturel, EST FBS.
 
 
 
 \newpage
-
 \chapter*{Liste des abréviations}
 \addcontentsline{toc}{chapter}{Liste des abréviations}
 
-\begin{longtable}{|c|m{10cm}|}
-\hline
-\textbf{Abréviation} & \textbf{Signification} \\ \hline
-API & Application Programming Interface \\ \hline
-NLP & Natural Language Processing \\ \hline
-RAG & Retrieval-Augmented Generation \\ \hline
-LLM & Large Language Model \\ \hline
-HTML & HyperText Markup Language \\ \hline
-CSS & Cascading Style Sheets \\ \hline
-SQL & Structured Query Language \\ \hline
+\begin{longtable}{ll}
+\toprule
+\rowcolor{primary}\textbf{\color{white}Abréviation} & \textbf{\color{white}Signification} \\ 
+\midrule
 \end{longtable}
+\vspace{-1.5cm}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{primary}}l X}
+\rowcolor{lightgray} API & Application Programming Interface \\
+\rowcolor{white} NLP & Natural Language Processing (Traitement du Langage Naturel) \\
+\rowcolor{lightgray} RAG & Retrieval-Augmented Generation (Génération Augmentée par Récupération) \\
+\rowcolor{white} LLM & Large Language Model (Grand Modèle de Langage) \\
+\rowcolor{lightgray} IA & Intelligence Artificielle \\
+\rowcolor{white} PFE & Projet de Fin d'Études \\
+\rowcolor{lightgray} EST FBS & École Supérieure de Technologie de Fquih Ben Salah \\
+\rowcolor{white} IDS & Informatique Décisionnelle et Statistique \\
+\rowcolor{lightgray} GI & Génie Informatique \\
+\rowcolor{white} HTML & HyperText Markup Language \\
+\rowcolor{lightgray} CSS & Cascading Style Sheets \\
+\rowcolor{white} SQL & Structured Query Language \\
+\rowcolor{lightgray} DBMS & Database Management System (Système de Gestion de Base de Données) \\
+\rowcolor{white} REST & Representational State Transfer \\
+\rowcolor{lightgray} UI / UX & User Interface / User Experience \\
+\rowcolor{white} JSON & JavaScript Object Notation \\
+\bottomrule
+
+\end{tabularx}
+
 
 \newpage
 
@@ -475,7 +504,7 @@ L'administrateur souhaite enrichir la base documentaire du chatbot avec un nouve
 
 Le script analyse automatiquement le contenu du document, le découpe en plusieurs segments puis génère les vecteurs correspondants. Ces vecteurs sont ensuite enregistrés dans la base Pinecone afin d'être utilisés lors des recherches futures. Une fois cette opération terminée, le nouveau document devient immédiatement accessible au chatbot et peut être utilisé pour répondre aux questions des utilisateurs.
 \newpage
-\section{Description du Diagramme de cas d'utilisation}
+\section{ Diagramme de cas d'utilisation}
 
 
 Le diagramme de cas d’utilisation permet de représenter les différentes interactions entre les acteurs et le système. Dans le cadre du projet \textit{EST FBS Assistant}, deux acteurs principaux interviennent : l’Utilisateur et l’Administrateur.
@@ -484,7 +513,7 @@ L’Utilisateur correspond principalement aux étudiants, candidats ou visiteurs
 
 L’Administrateur est responsable de l’alimentation et de la maintenance du système. Il peut ajouter et indexer de nouveaux documents dans la base documentaire, consulter l’historique des interactions ainsi qu’assurer la gestion des ressources utilisées par le chatbot.
 \newpage
-\section{Diagramme d'utilisation}
+.
 \newline
 
 Le diagramme suivant présente les principaux cas d’utilisation et met en évidence la séparation des responsabilités entre les différents acteurs.
@@ -523,7 +552,7 @@ usecase/.style={draw, ellipse, minimum width=4.2cm, minimum height=1cm}
 \draw[-] (admin)--(a3);
 
 \end{tikzpicture}
-
+\newline
 \caption{Diagramme de cas d’utilisation du système EST FBS Assistant}
 \label{fig:usecase}
 \end{figure}
