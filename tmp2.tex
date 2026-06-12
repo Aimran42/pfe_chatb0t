@@ -134,74 +134,76 @@
 \begin{titlepage}
 \thispagestyle{empty}
 
-% Bandeaux TikZ stylisés (haut et bas)
-\begin{tikzpicture}[remember picture, overlay]
-  \fill[primary] (current page.north west) rectangle ([yshift=-3.5cm]current page.north east);
-  \fill[accent] ([yshift=-3.5cm]current page.north west) rectangle ([yshift=-3.8cm]current page.north east);
-  \fill[primary] (current page.south west) rectangle ([yshift=2.5cm]current page.south east);
-  \fill[accent] ([yshift=2.5cm]current page.south west) rectangle ([yshift=2.9cm]current page.south east);
-\end{tikzpicture}
+\begin{center}
 
-% Logos dans le bandeau supérieur supérieur
-\vspace*{-2.2cm}
-\begin{minipage}{0.45\textwidth}
-    \begin{flushleft}
-        \includegraphics[height=1.8cm]{est.png}
-    \end{flushleft}
-\end{minipage}%
-\begin{minipage}{0.1\textwidth}
-    \centering
-\end{minipage}%
-\begin{minipage}{0.45\textwidth}
-    \begin{flushright}
-        \includegraphics[height=1.8cm]{usms.png}
-    \end{flushright}
+% Logos
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=2.5cm]{est.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.5\textwidth}
+\centering
+{\small Royaume du Maroc}\\[0.15cm]
+{\small Ministère de l'Enseignement Supérieur,}\\
+{\small de la Recherche Scientifique et de l'Innovation}\\[0.3cm]
+
+{\bfseries Université Sultan Moulay Slimane}\\[0.15cm]
+{\bfseries École Supérieure de Technologie}\\[0.15cm]
+{\bfseries Fkih Ben Salah}
+\end{minipage}
+\hfill
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=2.8cm]{usms.png}
 \end{minipage}
 
-\vspace{0.6cm}
-{\centering
+\vspace{2cm}
 
-  \textcolor{white}{\normalsize École Supérieure de Technologie de FBS}\\[3pt]
-\par}
+{\Huge\bfseries Rapport de Projet de Fin d'Études}
 
-\vspace{1.5cm}
-{\centering
-  \textcolor{primary}{\large\bfseries\MakeUppercase{Rapport de Projet de Fin d'Études}}\\[6pt]
-  \textcolor{accent}{\small\bfseries\MakeUppercase{\diplo\ ---\ \filiere}}\\
-\par}
+\vspace{1cm}
 
-\vspace{0.8cm}
-\begin{center}
-  \begin{tikzpicture}
-    \node[draw=accent, line width=1.5pt, rounded corners=8pt,
-          fill=lightgray, inner sep=14pt, text width=13.5cm, align=center]
-    {
-      \Huge\bfseries\color{primary}\titreProjet\\[0.3cm]
-      \Large\color{accent}\textbf{NLP \& Architecture RAG}
-    };
-  \end{tikzpicture}
-\end{center}
+{\large Filière : \filiere}
 
-\vspace{0.8cm}
-% Pipeline RAG miniature en TikZ ajusté pour la largeur de page
+\vspace{0.5cm}
 
+{\large Année universitaire : 2025 -- 2026}
 
 \vspace{1.2cm}
-\begin{center}
-  \large
-  \begin{tabular}{p{5cm}l}
-    \textcolor{primary}{\bfseries Réalisé par :} & Boubker Abderrahmane \\
-                                                 & Mahdam Mohammed Amine \\[0.4cm]
-    \textcolor{primary}{\bfseries Encadré par :}  & Pr. Rachid Ait Daoud \\[0.4cm]
-    \textcolor{primary}{\bfseries Domaine :}      & Intelligence Artificielle \& NLP \\
-  \end{tabular}
-\end{center}
+
+{\Large\bfseries Sujet}
+
+\vspace{0.5cm}
+
+\fbox{
+\begin{minipage}{0.85\textwidth}
+\centering
+\vspace{0.4cm}
+{\Large \titreProjet}\\[0.3cm]
+{\large NLP \& Architecture RAG}
+\vspace{0.4cm}
+\end{minipage}
+}
+
+\vspace{2cm}
+
+\begin{tabular}{|p{7cm}|p{6cm}|}
+\hline
+\textbf{Réalisé par :} & \textbf{Encadré par :} \\
+& \\
+BOUBKER Abderrahmane & Pr. Rachid Ait DAOUD \\
+MAHDAM Med Amine & \\
+& \\
+\hline
+\end{tabular}
 
 \vfill
-\begin{center}
-  \textcolor{primary}{\bfseries ANNÉE UNIVERSITAIRE : 2025 -- 2026}\\[0.4cm]
-  \textcolor{white}{\footnotesize Email: estfbs@usms.ma
- Site Web: http:// estfbs.usms.ac.ma/}
+
+École Supérieure de Technologie -- Fkih Ben Salah\\
+Email : estfbs@usms.ma\\
+Site Web : estfbs.usms.ac.ma
+
 \end{center}
 \end{titlepage}
 
@@ -571,10 +573,31 @@ L’ensemble des éléments présentés dans ce chapitre constitue une base soli
 \chapter{Conception et architecture du système}
 
 \section{Introduction}
-Texte ici.
+Après avoir analysé les besoins du système dans le chapitre précédent, nous passons maintenant à la phase de conception. Cette étape est très importante car elle permet de définir comment le système va être organisé et comment ses différents composants vont interagir entre eux. 
 
+Dans ce chapitre, nous allons présenter l'architecture générale de l'application, expliquer le fonctionnement du pipeline RAG, décrire la conception du frontend et du backend, et présenter la structure de la base de données et de la base vectorielle. 
+
+Nous terminerons par le diagramme de séquence et la structure des fichiers du projet.
+
+\newpage
 \section{Architecture générale de l'application}
-Texte ici.
+
+L'application EST FBS Assistant est construite selon une architecture trois tiers \newline classique, composée d'une couche de présentation, d'une couche applicative et d'une couche de données. Cette séparation permet de rendre le système plus organisé, plus facile à maintenir et plus facile à faire évoluer.
+
+La couche de présentation correspond à l'interface web développée en HTML, CSS et JavaScript. C'est la partie visible par l'utilisateur. Elle envoie les questions au backend via des requêtes HTTP et affiche les réponses reçues.
+
+La couche applicative correspond au backend développé avec FastAPI. C'est le cerveau de l'application. Elle reçoit les questions de l'utilisateur, appelle le pipeline RAG pour générer une réponse, enregistre l'interaction dans la base de données et renvoie la réponse au frontend.
+
+La couche de données regroupe deux systèmes de stockage distincts. Le premier est la base vectorielle Pinecone, qui stocke les représentations numériques des documents de l'école. Le second est la base de données relationnelle PostgreSQL hébergée sur Supabase, qui stocke l'historique des conversations.
+
+Ces trois couches communiquent entre elles de manière claire et bien définie, ce qui facilite le débogage et les futures évolutions du système. Le diagramme suivant illustre le flux d'exécution détaillé lors d'une requête utilisateur :
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Schemas.png} % Assurez-vous que le nom du fichier correspond
+    \caption{Diagramme de séquence du flux RAG dans l'application}
+    \label{fig:flux_rag}
+\end{figure}
 
 \section{Architecture RAG}
 Texte ici.
