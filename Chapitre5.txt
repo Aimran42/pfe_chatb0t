@@ -1,0 +1,149 @@
+# Chapitre 5 : Réalisation et développement
+
+---
+
+**5.1 Introduction**
+
+Ce chapitre présente la phase de réalisation concrète du projet. Après avoir défini les besoins et conçu l'architecture dans les chapitres précédents, nous allons maintenant décrire comment chaque composant du système a été développé. Nous commencerons par présenter l'environnement de développement et les technologies utilisées, puis nous détaillerons le développement de chaque module de l'application, depuis l'interface utilisateur jusqu'à l'indexation des documents. Ce chapitre constitue le cœur technique du rapport et permet de comprendre les choix d'implémentation effectués tout au long du projet.
+
+---
+
+**5.2 Environnement de développement**
+
+Le développement du projet a été réalisé sur un ordinateur personnel équipé d'un processeur moderne, de 8 Go de RAM minimum et d'une connexion internet stable. Cette connexion est indispensable car le système dépend de plusieurs services cloud externes comme Groq, Pinecone, Google Gemini et Supabase.
+
+Le système d'exploitation utilisé est Windows, mais le projet est compatible avec Linux et macOS sans modification, ce qui lui confère une bonne portabilité. L'éditeur de code utilisé est Visual Studio Code, qui offre une interface claire, une coloration syntaxique pour Python et JavaScript, et une intégration native avec Git pour la gestion des versions.
+
+L'environnement Python a été isolé grâce à un environnement virtuel créé avec la commande "python -m venv venv". Cet isolement est une bonne pratique en développement Python car il permet d'éviter les conflits entre les versions des bibliothèques de différents projets. Toutes les dépendances nécessaires au projet sont listées dans le fichier "requirements.txt" et peuvent être installées en une seule commande avec "pip install -r requirements.txt".
+
+Les variables sensibles comme les clés API sont stockées dans un fichier ".env" qui n'est jamais partagé ni publié sur GitHub. Un fichier ".env.example" est fourni à la place pour indiquer les variables nécessaires sans exposer leurs valeurs réelles.
+
+---
+
+**5.3 Technologies utilisées**
+
+Le projet utilise un ensemble de technologies modernes, chacune choisie pour ses qualités spécifiques et son adéquation avec les besoins du système.
+
+**Python 3.11** est le langage principal du backend. Il a été choisi pour sa simplicité, sa lisibilité et la richesse de son écosystème de bibliothèques, notamment dans le domaine de l'intelligence artificielle et du traitement du langage naturel.
+
+**FastAPI** est le framework web utilisé pour développer l'API REST du backend. Il offre des performances élevées grâce à sa compatibilité avec les opérations asynchrones, et génère automatiquement une documentation interactive accessible via l'URL "/docs".
+
+**LangChain** est le framework d'orchestration du pipeline RAG. Il fournit des abstractions de haut niveau pour connecter facilement les différents composants du pipeline, comme les embeddings, la base vectorielle et le modèle de langage.
+
+**Pinecone** est la base de données vectorielle utilisée pour stocker et rechercher les représentations numériques des documents. Elle est hébergée dans le cloud et offre une recherche par similarité très rapide.
+
+**Google Gemini** est le modèle d'embeddings utilisé pour transformer les textes en vecteurs numériques. Le modèle "gemini-embedding-001" produit des vecteurs de haute qualité, adaptés aux textes en français.
+
+**Groq** est la plateforme d'inférence utilisée pour exécuter le modèle de langage Llama-3.3-70b-versatile. Elle se distingue par sa très faible latence, ce qui permet d'obtenir des réponses rapides.
+
+**Supabase** est la plateforme cloud qui héberge la base de données PostgreSQL. Elle offre une interface simple pour gérer les données et une connexion sécurisée via une URL de connexion standard.
+
+**SQLAlchemy** est l'ORM Python utilisé pour interagir avec la base de données PostgreSQL de manière orientée objet, sans écrire de requêtes SQL brutes.
+
+**HTML, CSS et JavaScript** constituent la pile technologique du frontend. Ils ont été choisis pour leur simplicité et pour éviter l'ajout de dépendances inutiles liées à un framework frontend.
+
+---
+
+**5.4 Développement de l'interface utilisateur**
+
+L'interface utilisateur a été développée dans un seul fichier "index.html" qui regroupe le code HTML, le style CSS et le code JavaScript. Ce choix simplifie le déploiement car il suffit de servir un seul fichier statique via FastAPI.
+
+La structure HTML est divisée en deux grandes sections. La première est la barre latérale gauche qui contient le logo de l'application, l'indicateur de statut du service, les informations techniques sur le modèle utilisé et le nombre de documents indexés, ainsi que les boutons de questions suggérées. Ces questions couvrent les thèmes les plus fréquemment demandés par les étudiants, comme les filières disponibles, les conditions d'admission et les informations de contact.
+
+La deuxième section est la zone principale de conversation. Elle affiche un message de bienvenue au démarrage, puis les bulles de dialogue une fois la conversation commencée. Chaque bulle utilisateur est alignée à droite et chaque réponse du chatbot est alignée à gauche, avec une mise en forme différente pour les distinguer visuellement. Sous chaque réponse, les sources sont affichées sous forme de petits badges colorés portant le nom du document utilisé.
+
+Le style CSS utilise des variables de couleur définies dans le sélecteur ":root", ce qui facilite la personnalisation du thème. Le design adopte un fond sombre avec des dégradés bleu-violet, des coins arrondis et des effets de transparence qui donnent un aspect moderne à l'interface.
+
+Le code JavaScript gère l'ensemble des interactions dynamiques. Il envoie les requêtes au backend via la fonction "fetch()", affiche un indicateur d'attente animé pendant le traitement, met à jour le DOM pour afficher les nouvelles réponses, et maintient l'historique des dix derniers échanges pour le transmettre avec chaque nouvelle question.
+
+---
+
+**5.5 Développement de l'API avec FastAPI**
+
+Le fichier "main.py" constitue le point d'entrée du backend. Il commence par importer toutes les dépendances nécessaires, puis définit l'application FastAPI avec un gestionnaire de cycle de vie "lifespan". Ce gestionnaire est une fonctionnalité moderne de FastAPI qui permet d'exécuter du code au démarrage et à l'arrêt de l'application. Au démarrage, il initialise le service RAG en créant une instance de la classe RAGService, et initialise la connexion à la base de données. Si l'initialisation échoue, l'application continue de fonctionner mais retourne une erreur 503 lorsque l'endpoint "/ask" est appelé.
+
+Le middleware CORS est configuré pour autoriser les requêtes provenant de toutes les origines pendant le développement. En production, il faudrait restreindre cette configuration aux origines autorisées uniquement.
+
+La validation des données entrantes est assurée par un modèle Pydantic appelé "Question". Ce modèle accepte deux champs optionnels, "question" et "text", pour assurer la compatibilité avec différents formats de requête. Il contient également un champ "history" qui est une liste de dictionnaires représentant l'historique de la conversation. Une méthode "normalized\_text()" est définie dans ce modèle pour récupérer la valeur du champ disponible, qu'il s'appelle "question" ou "text".
+
+---
+
+**5.6 Mise en place du pipeline RAG**
+
+Le fichier "rag.py" contient la classe RAGService qui implémente tout le pipeline RAG. Le constructeur de cette classe initialise les quatre composants principaux du pipeline : le modèle d'embeddings, la base vectorielle, le modèle de langage et le prompt système.
+
+Le retrieveur est configuré pour rechercher les trois chunks les plus pertinents dans Pinecone à chaque requête. Ce nombre a été choisi comme compromis entre la quantité de contexte fournie au modèle et la pertinence des informations récupérées.
+
+Le prompt système est rédigé entièrement en français et contient des instructions claires pour le modèle de langage. Il lui demande de se comporter comme l'assistant officiel de l'EST FBS, de répondre uniquement en se basant sur le contexte fourni, et de conseiller poliment l'utilisateur de contacter l'administration si la réponse ne se trouve pas dans les documents indexés. Ce comportement est important pour éviter que le modèle n'invente des informations incorrectes.
+
+La méthode principale "ask()" reçoit la question et l'historique, formate le contexte documentaire et l'historique, puis exécute la chaîne LangChain composée du prompt, du modèle de langage et d'un parser de sortie. Elle retourne ensuite un objet RAGResponse contenant la réponse générée et la liste des sources utilisées.
+
+---
+
+**5.7 Intégration de Pinecone**
+
+Pinecone est intégré dans le projet via la bibliothèque "langchain-pinecone". La connexion à Pinecone est établie en utilisant la clé API et le nom de l'index stockés dans les variables d'environnement. L'index Pinecone doit être créé manuellement dans l'interface web de Pinecone avant de lancer le projet, avec une dimension correspondant à la taille des vecteurs produits par le modèle d'embeddings Gemini.
+
+Une instance de "PineconeVectorStore" est créée dans le constructeur de RAGService, en lui passant le modèle d'embeddings et le nom de l'index. Cette instance est ensuite utilisée pour créer un retrieveur qui sera appelé à chaque requête pour récupérer les chunks les plus pertinents.
+
+Lors de l'indexation des documents via le script "load\_vectors.py", les vecteurs sont insérés dans Pinecone par lots de 100 pour éviter de dépasser les limites de l'API. Chaque vecteur est identifié par un hash MD5 calculé à partir du contenu du chunk correspondant. Cette approche permet de détecter les doublons et d'éviter d'insérer plusieurs fois le même contenu lors des réindexations successives.
+
+---
+
+**5.8 Intégration des embeddings Gemini**
+
+Les embeddings sont générés par le modèle "models/gemini-embedding-001" de Google, accessible via l'API Google AI Studio. Ce modèle est intégré dans le projet via la bibliothèque "langchain-google-genai", qui fournit une classe "GoogleGenerativeAIEmbeddings" compatible avec l'interface standard de LangChain.
+
+Le modèle d'embeddings est utilisé à deux endroits dans le projet. Le premier est lors de l'indexation des documents, où il transforme chaque chunk de texte en un vecteur numérique qui est ensuite stocké dans Pinecone. Le second est lors du traitement d'une requête utilisateur, où il transforme la question posée en un vecteur numérique qui est comparé aux vecteurs stockés pour trouver les chunks les plus pertinents.
+
+Le modèle Gemini a été choisi pour sa bonne gestion des textes en français et pour la qualité de ses embeddings, qui capturent bien le sens sémantique des phrases. Cela permet au système de retrouver les documents pertinents même lorsque la question n'utilise pas exactement les mêmes mots que les documents indexés.
+
+---
+
+**5.9 Intégration du modèle Groq**
+
+Le modèle de langage utilisé pour générer les réponses est Llama-3.3-70b-versatile, accessible via la plateforme Groq. Groq se distingue des autres plateformes d'inférence par sa très faible latence, grâce à l'utilisation de puces matérielles spécialisées appelées LPU (Language Processing Unit). Cette rapidité est un avantage important pour une application conversationnelle où l'utilisateur attend une réponse en temps réel.
+
+Le modèle est intégré via la classe "ChatGroq" de la bibliothèque "langchain-groq". Il est configuré avec une température de 0.3, ce qui produit des réponses relativement précises et cohérentes, avec peu de variabilité. Un timeout de 30 secondes est également configuré pour éviter que l'application ne reste bloquée en cas de lenteur de l'API.
+
+La température est un paramètre important dans les modèles de langage. Une valeur proche de 0 rend le modèle plus déterministe et factuel, ce qui est souhaitable pour un assistant qui doit fournir des informations précises. Une valeur proche de 1 rend le modèle plus créatif et varié, ce qui serait moins adapté à notre cas d'usage.
+
+---
+
+**5.10 Intégration de Supabase PostgreSQL**
+
+La journalisation des interactions est gérée par le fichier "database.py". Ce fichier utilise SQLAlchemy pour définir le modèle de données et gérer la connexion à la base de données PostgreSQL hébergée sur Supabase.
+
+La connexion est établie via l'URL de connexion stockée dans la variable d'environnement "DATABASE\_URL". L'option "pool\_pre\_ping=True" est activée dans la configuration du moteur SQLAlchemy. Cette option permet de vérifier que la connexion est toujours active avant chaque opération, ce qui évite les erreurs liées aux connexions expirées après une longue période d'inactivité.
+
+La table "chat\_logs" est définie comme une classe Python héritant de la classe de base SQLAlchemy. Cette approche orientée objet permet de manipuler les enregistrements comme des objets Python plutôt que comme des lignes SQL. La fonction "log\_interaction()" est appelée après chaque réponse générée pour enregistrer la question, la réponse et les sources dans la base de données. Si une erreur survient lors de l'enregistrement, elle est capturée et logguée sans interrompre le service, ce qui garantit que les problèmes de base de données n'affectent pas l'expérience utilisateur.
+
+---
+
+**5.11 Indexation des documents**
+
+L'indexation des documents est réalisée par le script autonome "load\_vectors.py" situé dans le dossier "scripts". Ce script doit être exécuté une seule fois lors de la mise en place du système, puis à nouveau chaque fois que de nouveaux documents sont ajoutés au dossier "data".
+
+Le script commence par scanner le dossier "data" à la recherche de fichiers PDF et TXT. Pour chaque fichier PDF, il utilise "PyPDFLoader" de LangChain pour extraire le texte page par page. Pour les fichiers TXT, il utilise "TextLoader". Une fois le texte extrait, il est découpé en chunks par le "RecursiveCharacterTextSplitter" avec une taille de 1000 caractères et un chevauchement de 150 caractères. Ce type de découpage est dit récursif car il essaie d'abord de couper aux fins de paragraphes, puis aux fins de phrases, puis aux fins de mots, pour préserver au maximum la cohérence du texte.
+
+Pour chaque chunk, un identifiant unique est calculé à partir du hash MD5 de son contenu. Cet identifiant est utilisé lors de l'insertion dans Pinecone pour éviter les doublons. Les vecteurs sont ensuite insérés par lots de 100 pour respecter les limites de l'API Pinecone et optimiser les performances de l'indexation.
+
+---
+
+**5.12 Endpoints API développés**
+
+Le backend expose trois endpoints REST accessibles via HTTP.
+
+Le premier endpoint "GET /" est le plus simple. Il retourne le contenu du fichier "index.html" sous forme de réponse HTML. Cela permet de servir l'interface utilisateur directement depuis le serveur FastAPI sans avoir besoin d'un serveur web séparé comme Nginx ou Apache.
+
+Le deuxième endpoint "GET /health" retourne un objet JSON contenant des informations sur l'état du service. Il indique si le service RAG est initialisé, le nom du modèle LLM utilisé et le nombre de chunks disponibles dans Pinecone. Cet endpoint est utilisé par le frontend au démarrage pour afficher l'indicateur de statut et les informations techniques dans la barre latérale.
+
+Le troisième endpoint "POST /ask" est le plus important. Il reçoit un objet JSON contenant la question de l'utilisateur et l'historique de la conversation. Il valide les données via le modèle Pydantic "Question", appelle la méthode "ask()" du service RAG, journalise l'interaction dans Supabase et retourne un objet JSON contenant la réponse générée et la liste des sources utilisées. En cas d'erreur, il retourne un code HTTP approprié : 400 si la question est vide ou invalide, 503 si le service RAG n'est pas initialisé, et 500 en cas d'erreur interne.
+
+---
+
+**5.13 Synthèse**
+
+Ce chapitre a présenté en détail la phase de réalisation et de développement du projet EST FBS Assistant. Nous avons décrit l'environnement de développement mis en place, les technologies choisies et les raisons de ces choix. Nous avons ensuite détaillé le développement de chaque composant du système : l'interface utilisateur, le backend FastAPI, le pipeline RAG, la base vectorielle Pinecone, les embeddings Gemini, le modèle de langage Groq, la base de données Supabase et le script d'indexation des documents. Chaque composant a été développé de manière modulaire et indépendante, ce qui facilite la maintenance et les futures évolutions du système. Le chapitre suivant sera consacré aux tests réalisés, aux résultats obtenus et aux perspectives d'amélioration du projet.
+
+---
