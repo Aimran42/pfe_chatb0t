@@ -322,22 +322,43 @@ L'École Supérieure de Technologie de Fkih Ben Salah (EST FBS), qui fait partie
 \section{Objectifs du projet}
 C'est dans ce contexte que ce Projet de Fin d'Études a été réalisé, dans le cadre de la deuxième année du Diplôme Universitaire de Technologie, filière \newline Informatique Décisionnelle et Statistiques. L'objectif est de développer un chatbot \newline intelligent qui peut répondre aux questions des étudiants en se basant sur les documents officiels de l'école.
 \newpage
-
+%
 \section{Méthodologie adoptée}
 
-Pour mener à bien ce projet, nous avons adopté une démarche structurée en quatre phases clés. Nous avons commencé par l'analyse et la spécification des besoins, une étape préliminaire visant à recueillir les exigences des utilisateurs et à étudier les documents officiels de l'établissement. Ensuite, la phase de Crisp nous a permis de définir \newline l'architecture globale du système et de sélectionner les technologies les plus adaptées.
-\newline
+Pour mener à bien ce projet, nous avons adopté une démarche structurée en quatre phases clés. Nous avons commencé par l'analyse et la spécification des besoins, une étape préliminaire visant à recueillir les exigences des utilisateurs et à étudier les documents officiels de l'établissement. Ensuite, la phase inspirée de la méthodologie CRISP-DM nous a permis de définir l'architecture globale du système et de sélectionner les technologies les plus adaptées.
 
 Nous avons enchaîné avec le développement des différents composants, notamment le pipeline RAG, l'API backend et l'interface utilisateur. Enfin, une phase de tests rigoureux a validé la conformité du système par rapport aux attentes et corrigé les anomalies.
-\newline
 
 La solution proposée s'appuie sur l'architecture RAG (Retrieval-Augmented Generation). Cette approche moderne permet au chatbot d'interroger dynamiquement la base documentaire de l'école afin d'y extraire les informations les plus pertinentes.
-\newline 
 
-Le système utilise ensuite ces données textuelles pour générer une réponse claire, \newline précise et parfaitement contextualisée. Grâce à ce mécanisme, les réponses fournies à \newline l'utilisateur sont systématiquement adossées à des sources réelles et vérifiables. Cela \newline permet de  limiter drastiquement les risques d'hallucination de l'intelligence artificielle et de garantir la fiabilité de l'application.
-\newline 
+Le système utilise ensuite ces données textuelles pour générer une réponse claire, précise et parfaitement contextualisée. Grâce à ce mécanisme, les réponses fournies à l'utilisateur sont systématiquement adossées à des sources réelles et vérifiables. Cela permet de limiter drastiquement les risques d'hallucination de l'intelligence artificielle et de garantir la fiabilité de l'application.
 
-Sur le plan technique, l'écosystème du projet repose sur un ensemble de \newline technologies modernes et performantes. Nous utilisons le framework FastAPI pour la conception d'une API robuste, ainsi que LangChain pour l'orchestration globale du \newline  pipeline RAG. \newpage La base de données vectorielle Pinecone assure le stockage et la recherche de similarité des documents, tandis que Google Gemini s'occupe de transformer les textes en vecteurs numériques. Les réponses sont générées rapidement par le modèle Llama-3.3-70b via Groq. Enfin, Supabase gère la base PostgreSQL pour l'historique, et l'interface web s'appuie sur HTML, CSS et JavaScript.
+Sur le plan technique, l'écosystème du projet repose sur un ensemble de technologies modernes et performantes. La figure~\ref{fig:ecosysteme_tech} présente la répartition de ces outils entre la partie utilisateur (Frontend) et le moteur de l'application (Backend).
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{frontend_tech.png} % Remplacez par votre image (HTML, CSS, JS)
+        \caption{Technologies de la couche Présentation (Frontend)}
+        \label{fig:front_tech}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{backend_tech.png} % Remplacez par votre image (FastAPI, LangChain, Llama, etc.)
+        \caption{Technologies de la couche Applicative (Backend)}
+        \label{fig:back_tech}
+    \end{minipage}
+    \caption{Écosystème technologique global du projet}
+    \label{fig:ecosysteme_tech}
+\end{figure}
+
+\newpage
+Nous utilisons notamment le framework FastAPI pour la conception d'une API robuste, ainsi que LangChain pour l'orchestration globale du pipeline RAG.
+%
+
+La base de données vectorielle Pinecone assure le stockage et la recherche de similarité des documents, tandis que Google Gemini s'occupe de transformer les textes en vecteurs numériques. Les réponses sont générées rapidement par le modèle Llama-3.3-70b via Groq. Enfin, Supabase gère la base PostgreSQL pour l'historique, et l'interface web s'appuie sur HTML, CSS et JavaScript.
 L'interface frontend a été développée en HTML, CSS et JavaScript pur, sans l'utilisation d'un framework externe. Elle se présente sous la forme d'une Single-Page Application (SPA), ce qui signifie que toute l'interaction avec \newline l'utilisateur se déroule sur une seule page web sans rechargement. Le design adopte un thème sombre avec des couleurs bleu et violet, ce qui donne à l'application un aspect moderne et professionnel. L'interface propose également une barre latérale contenant des questions suggérées, permettant à l'utilisateur de démarrer rapidement une conversation sans avoir à taper manuellement sa question. Enfin, les sources utilisées pour générer chaque réponse sont affichées sous forme de badges colorés, ce qui renforce la transparence et la fiabilité du système.
 
 \section{Structure du rapport}
@@ -599,8 +620,27 @@ Ces trois couches communiquent entre elles de manière claire et bien définie, 
     \label{fig:flux_rag}
 \end{figure}
 
-\section{Architecture RAG}
-Texte ici.
+\section{Fonctionnement détaillé de l'architecture RAG}
+
+Le cœur technique du projet repose sur l'architecture RAG, qui signifie Retrieval-Augmented Generation, ou en français Génération Augmentée par Récupération. Cette architecture permet de combiner la recherche dans une base documentaire avec la génération de texte par un modèle de langage, afin de produire des réponses précises et fiables.
+
+Le fonctionnement du pipeline RAG se déroule en plusieurs étapes successives, illustrées de manière séquentielle dans la figure~\ref{fig:pipeline_rag_details}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{pipeline_rag_details.png} % Remplacez par le schéma du pipeline RAG
+    \caption{Architecture fonctionnelle et étapes du pipeline RAG}
+    \label{fig:pipeline_rag_details}
+\end{figure}
+
+Lorsque l'utilisateur pose une question, celle-ci est d'abord transformée en vecteur numérique grâce au modèle d'embeddings Google Gemini. Ce vecteur représente le sens de la question sous forme mathématique.
+
+
+Ensuite, ce vecteur est comparé à tous les vecteurs stockés dans Pinecone afin de trouver les trois passages documentaires les plus proches sémantiquement. 
+
+Ces passages sont ensuite utilisés comme contexte et injectés dans un prompt structuré, accompagnés de l'historique des derniers échanges de la conversation. Ce prompt complet est ensuite envoyé au modèle de langage Llama-3.3-70b via l'API Groq, qui génère une réponse en français basée uniquement sur le contexte fourni. Enfin, la réponse générée et les noms des sources utilisées sont renvoyés au frontend pour être affichés à l'utilisateur.
+
+Ce mécanisme présente un avantage majeur par rapport à un simple chatbot classique : les réponses sont toujours ancrées dans les documents officiels de l'école, ce qui élimine le risque que le modèle invente des informations incorrectes.
 
 \section{Conception du frontend}
 Texte ici.
