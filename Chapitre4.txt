@@ -1,0 +1,105 @@
+# Chapitre 4 : Conception et architecture du système
+
+---
+
+**4.1 Introduction**
+
+Après avoir analysé les besoins du système dans le chapitre précédent, nous passons maintenant à la phase de conception. Cette étape est très importante car elle permet de définir comment le système va être organisé et comment ses différents composants vont interagir entre eux. Dans ce chapitre, nous allons présenter l'architecture générale de l'application, expliquer le fonctionnement du pipeline RAG, décrire la conception du frontend et du backend, et présenter la structure de la base de données et de la base vectorielle. Nous terminerons par le diagramme de séquence et la structure des fichiers du projet.
+
+---
+
+**4.2 Architecture générale de l'application**
+
+L'application EST FBS Assistant est construite selon une architecture trois tiers classique, composée d'une couche de présentation, d'une couche applicative et d'une couche de données. Cette séparation permet de rendre le système plus organisé, plus facile à maintenir et plus facile à faire évoluer.
+
+La couche de présentation correspond à l'interface web développée en HTML, CSS et JavaScript. C'est la partie visible par l'utilisateur. Elle envoie les questions au backend via des requêtes HTTP et affiche les réponses reçues.
+
+La couche applicative correspond au backend développé avec FastAPI. C'est le cerveau de l'application. Elle reçoit les questions de l'utilisateur, appelle le pipeline RAG pour générer une réponse, enregistre l'interaction dans la base de données et renvoie la réponse au frontend.
+
+La couche de données regroupe deux systèmes de stockage distincts. Le premier est la base vectorielle Pinecone, qui stocke les représentations numériques des documents de l'école. Le second est la base de données relationnelle PostgreSQL hébergée sur Supabase, qui stocke l'historique des conversations.
+
+Ces trois couches communiquent entre elles de manière claire et bien définie, ce qui facilite le débogage et les futures évolutions du système.
+
+---
+
+**4.3 Architecture RAG**
+
+Le cœur technique du projet repose sur l'architecture RAG, qui signifie Retrieval-Augmented Generation, ou en français Génération Augmentée par Récupération. Cette architecture permet de combiner la recherche dans une base documentaire avec la génération de texte par un modèle de langage, afin de produire des réponses précises et fiables.
+
+Le fonctionnement du pipeline RAG se déroule en plusieurs étapes successives. Lorsque l'utilisateur pose une question, celle-ci est d'abord transformée en vecteur numérique grâce au modèle d'embeddings Google Gemini. Ce vecteur représente le sens de la question sous forme mathématique. Ensuite, ce vecteur est comparé à tous les vecteurs stockés dans Pinecone afin de trouver les trois passages documentaires les plus proches sémantiquement. Ces passages sont ensuite utilisés comme contexte et injectés dans un prompt structuré, accompagnés de l'historique des derniers échanges de la conversation. Ce prompt complet est ensuite envoyé au modèle de langage Llama-3.3-70b via l'API Groq, qui génère une réponse en français basée uniquement sur le contexte fourni. Enfin, la réponse générée et les noms des sources utilisées sont renvoyés au frontend pour être affichés à l'utilisateur.
+
+Ce mécanisme présente un avantage majeur par rapport à un simple chatbot classique : les réponses sont toujours ancrées dans les documents officiels de l'école, ce qui élimine le risque que le modèle invente des informations incorrectes.
+
+---
+
+**4.4 Conception du frontend**
+
+L'interface utilisateur a été conçue pour être simple, moderne et facile à utiliser, même pour des personnes peu habituées aux outils numériques. Elle est développée en HTML, CSS et JavaScript pur, sans l'utilisation d'un framework frontend comme React ou Vue.js. Ce choix a été fait pour garder l'application légère et facile à déployer.
+
+L'interface est organisée en deux zones principales. La première est une barre latérale située à gauche de l'écran, qui affiche le nom et le logo de l'application, un indicateur de statut montrant si le service est en ligne ou hors ligne, des informations techniques comme le nom du modèle LLM utilisé et le nombre de documents indexés, ainsi qu'une liste de questions suggérées que l'utilisateur peut cliquer pour démarrer rapidement une conversation.
+
+La deuxième zone est la zone principale de conversation, qui occupe la majeure partie de l'écran. Elle affiche les messages échangés entre l'utilisateur et le chatbot sous forme de bulles de dialogue. Chaque réponse du chatbot est accompagnée des noms des documents sources utilisés, affichés sous forme de badges colorés. En bas de cette zone se trouve une zone de saisie de texte avec un bouton d'envoi. Le champ de saisie s'agrandit automatiquement en fonction du texte saisi par l'utilisateur.
+
+Le design adopte un thème sombre avec des dégradés de couleurs bleu et violet, ce qui donne à l'application un aspect professionnel et moderne. Un indicateur d'attente animé est affiché pendant que le système traite la question, informant l'utilisateur que sa demande est en cours de traitement.
+
+---
+
+**4.5 Conception du backend**
+
+Le backend de l'application est développé avec FastAPI, un framework Python moderne et très performant pour la création d'APIs REST. FastAPI a été choisi pour sa rapidité d'exécution, sa gestion native des opérations asynchrones et sa génération automatique de documentation interactive via Swagger.
+
+Le backend est organisé en trois fichiers Python principaux, chacun ayant une responsabilité bien définie. Le fichier principal "main.py" constitue le point d'entrée de l'application. Il initialise les services au démarrage, configure le middleware CORS pour autoriser les requêtes depuis le frontend, et expose trois endpoints REST. Le premier endpoint "GET /" sert le fichier HTML de l'interface utilisateur. Le deuxième endpoint "GET /health" retourne l'état du service et des informations techniques sur le système. Le troisième endpoint "POST /ask" reçoit la question de l'utilisateur, appelle le service RAG pour générer une réponse, journalise l'interaction et retourne la réponse au format JSON.
+
+La validation des données entrantes est assurée par Pydantic, qui vérifie que les champs obligatoires sont présents et que les types de données sont corrects. En cas d'erreur, le backend retourne automatiquement un message d'erreur clair avec le code HTTP approprié.
+
+---
+
+**4.6 Conception de la base vectorielle**
+
+La base vectorielle Pinecone joue un rôle central dans le fonctionnement du pipeline RAG. Son rôle est de stocker les représentations numériques des documents de l'école et de permettre une recherche rapide par similarité sémantique.
+
+Avant d'être stockés dans Pinecone, les documents passent par une étape de prétraitement réalisée par le script "load\_vectors.py". Ce script commence par lire les fichiers PDF et TXT présents dans le dossier "data" du projet. Ensuite, il découpe chaque document en morceaux de texte appelés "chunks", d'une taille de 1000 caractères avec un chevauchement de 150 caractères entre chaque morceau. Ce chevauchement est important car il permet de ne pas perdre le contexte entre deux morceaux consécutifs. Chaque morceau est ensuite transformé en vecteur numérique par le modèle d'embeddings Google Gemini, qui produit une représentation mathématique du sens du texte. Enfin, ces vecteurs sont insérés dans Pinecone par lots de 100, avec un identifiant unique basé sur l'empreinte MD5 du contenu de chaque morceau, ce qui permet d'éviter les doublons lors des réindexations.
+
+Lors d'une requête utilisateur, Pinecone compare le vecteur de la question avec tous les vecteurs stockés et retourne les trois morceaux les plus proches sémantiquement. Ces morceaux sont ensuite utilisés comme contexte pour générer la réponse.
+
+---
+
+**4.7 Conception de la base de données**
+
+La base de données relationnelle utilisée dans ce projet est PostgreSQL, hébergée sur la plateforme cloud Supabase. Son rôle principal est de journaliser toutes les interactions entre les utilisateurs et le chatbot, afin de permettre un suivi et une analyse des questions posées.
+
+La connexion à la base de données est gérée par SQLAlchemy, un ORM (Object-Relational Mapping) Python qui permet de manipuler la base de données en utilisant des objets Python plutôt que des requêtes SQL brutes. Cette approche rend le code plus lisible, plus maintenable et moins exposé aux erreurs.
+
+La base de données contient une seule table appelée "chat\_logs". Cette table est composée de cinq colonnes. La première colonne "id" est un entier auto-incrémenté qui sert de clé primaire. La deuxième colonne "timestamp" enregistre automatiquement la date et l'heure de chaque interaction. La troisième colonne "question" stocke le texte de la question posée par l'utilisateur. La quatrième colonne "reponse" stocke le texte de la réponse générée par le chatbot. La cinquième colonne "sources" stocke les noms des documents utilisés pour générer la réponse, séparés par des virgules.
+
+Cette structure simple mais efficace permet de garder une trace complète de toutes les interactions et d'analyser les questions les plus fréquemment posées pour améliorer le système dans le futur.
+
+---
+
+**4.8 Diagramme de séquence**
+
+Le diagramme de séquence décrit le déroulement complet d'une interaction entre l'utilisateur et le système, depuis la saisie de la question jusqu'à l'affichage de la réponse.
+
+L'interaction commence lorsque l'utilisateur saisit une question dans l'interface web et clique sur le bouton d'envoi. Le frontend envoie alors une requête HTTP POST vers l'endpoint "/ask" du backend FastAPI, en incluant la question et l'historique des derniers échanges. Le backend reçoit la requête, valide les données via Pydantic, puis appelle la méthode "ask()" du service RAGService. Ce service commence par transformer la question en vecteur numérique via l'API Google Gemini. Il envoie ensuite ce vecteur à Pinecone pour récupérer les trois chunks les plus pertinents. Ces chunks, combinés avec l'historique de la conversation, sont injectés dans le prompt système. Ce prompt est ensuite envoyé au modèle Llama-3.3-70b via l'API Groq, qui génère la réponse finale. Le service RAG retourne la réponse et les sources au backend, qui enregistre l'interaction dans Supabase avant de renvoyer le résultat au frontend sous format JSON. Enfin, le frontend affiche la réponse à l'utilisateur avec les sources correspondantes.
+
+---
+
+**4.9 Structure du projet**
+
+Le projet est organisé en plusieurs dossiers et fichiers, chacun ayant un rôle précis dans le fonctionnement de l'application. Cette organisation claire facilite la lecture du code et sa maintenance.
+
+Le dossier racine contient le fichier "index.html" qui représente l'interface web complète de l'application, le fichier "requirements.txt" qui liste toutes les dépendances Python nécessaires, et le fichier ".env.example" qui sert de modèle pour les variables d'environnement.
+
+Le dossier "app" contient les trois fichiers Python principaux du backend. Le fichier "main.py" est le point d'entrée de l'application FastAPI avec les endpoints REST. Le fichier "rag.py" contient la classe RAGService qui implémente tout le pipeline RAG. Le fichier "database.py" gère la connexion à Supabase et la journalisation des interactions.
+
+Le dossier "data" contient les documents officiels de l'école qui sont indexés dans Pinecone. Il contient actuellement trois fichiers : un fichier texte "presentation.txt" avec les informations générales sur l'école, un fichier PDF "description\_donnees\_reglement\_EST\_FBS.pdf" avec le règlement intérieur, et un fichier PDF "CNPN\_Diplôme Universitaire de Technologie.pdf" avec le programme national DUT.
+
+Le dossier "scripts" contient le fichier "load\_vectors.py" qui est le script d'indexation des documents dans Pinecone. Ce script est exécuté séparément, uniquement lorsque de nouveaux documents sont ajoutés.
+
+---
+
+**4.10 Synthèse**
+
+Ce chapitre a présenté en détail la conception et l'architecture du système EST FBS Assistant. Nous avons vu que l'application repose sur une architecture trois tiers claire, avec un frontend web, un backend FastAPI et deux systèmes de stockage distincts. Le pipeline RAG a été décrit étape par étape, depuis la transformation de la question en vecteur jusqu'à la génération de la réponse par le modèle de langage. La conception du frontend, du backend, de la base vectorielle et de la base de données a été expliquée de manière détaillée. Enfin, le diagramme de séquence et la structure du projet ont permis d'avoir une vue complète et claire de l'organisation du système. Le chapitre suivant sera consacré à la réalisation technique et au développement concret de ces différents composants.
+
+---
