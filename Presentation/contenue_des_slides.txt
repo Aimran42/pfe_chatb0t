@@ -1,0 +1,374 @@
+Slide 1 : Page De Garde
+Contenu à afficher dans la slide :
+Chatbot d’assistance pour le site de l’EST FBS
+Projet basé sur le NLP et le RAG
+Projet de Fin d’Études
+Réalisé par : [Votre nom]
+Encadré par : [Encadrant académique / professionnel]
+Texte court à dire oralement :
+Bonjour, je vous présente mon projet de fin d’études intitulé « Chatbot d’assistance pour le site de l’EST FBS basé sur le NLP ». Ce projet consiste à développer un assistant conversationnel capable de répondre aux questions des étudiants et visiteurs. Le chatbot utilise les documents de l’EST FBS comme source d’information. L’objectif est de faciliter l’accès aux informations académiques et administratives.
+Visuel recommandé :
+Logo de l’EST FBS utilisé dans index.html
+Icône chatbot ou intelligence artificielle
+Design conseillé :
+Titre centré
+Logo en haut ou à droite
+Couleurs sobres : bleu foncé, blanc, cyan
+Éviter trop de texte
+Temps estimé : 30 secondes
+Slide 2 : Plan De La Présentation
+Contenu à afficher dans la slide :
+Contexte et problématique
+Objectifs et solution proposée
+Architecture et technologies
+Fonctionnement NLP / RAG
+Démonstration, limites et perspectives
+Texte court à dire oralement :
+La présentation est organisée en plusieurs parties. Je vais d’abord présenter le contexte général du projet et le problème traité. Ensuite, je vais expliquer les objectifs et la solution proposée. Après cela, je détaillerai l’architecture technique, le frontend, le backend et le fonctionnement NLP/RAG. Enfin, je terminerai par la démonstration, les limites et les perspectives d’amélioration.
+Visuel recommandé :
+Schéma simple en étapes numérotées
+Design conseillé :
+Liste verticale claire
+Icônes simples pour chaque partie
+Éviter les animations complexes
+Temps estimé : 30 secondes
+Slide 3 : Contexte Général
+Contenu à afficher dans la slide :
+EST FBS : École Supérieure de Technologie de Fkih Ben Salah
+Établissement rattaché à l’Université Sultan Moulay Slimane
+Informations disponibles dans des documents PDF/TXT
+Besoin d’un accès rapide aux informations
+Public concerné : étudiants, visiteurs, administration
+Texte court à dire oralement :
+L’EST FBS dispose de plusieurs informations importantes concernant les formations, les inscriptions, les règlements et la vie universitaire. Ces informations sont présentes dans des documents comme presentation.txt et des fichiers PDF. Cependant, leur consultation peut prendre du temps pour un étudiant ou un visiteur. Le projet s’inscrit donc dans un contexte d’amélioration de l’accès à l’information.
+Visuel recommandé :
+Capture ou extrait de data/presentation.txt
+Icône école + documents
+Design conseillé :
+Contenu à gauche
+Visuel documentaire à droite
+Fond clair ou bleu très sobre
+Temps estimé : 1 minute
+Slide 4 : Problème Traité
+Contenu à afficher dans la slide :
+Informations dispersées dans plusieurs documents
+Recherche manuelle lente
+Questions répétitives des étudiants
+Difficulté à trouver une réponse précise rapidement
+Besoin d’une assistance automatique
+Texte court à dire oralement :
+Le problème principal est la difficulté d’accès rapide aux informations. Les étudiants posent souvent les mêmes questions sur les formations, l’admission, les modules ou le règlement. Sans outil intelligent, ils doivent chercher manuellement dans les documents. Cette méthode n’est pas toujours efficace. Le chatbot vient donc automatiser cette recherche.
+Visuel recommandé :
+Schéma : Documents dispersés → Recherche difficile → Chatbot
+Design conseillé :
+Mise en page problème/conséquence
+Utiliser des icônes : document, horloge, question
+Temps estimé : 1 minute
+Slide 5 : Problématique
+Contenu à afficher dans la slide :
+Comment fournir une réponse rapide aux étudiants ?
+Comment exploiter les documents officiels de l’EST FBS ?
+Comment améliorer l’expérience utilisateur ?
+Comment limiter les réponses non fiables ?
+Réponse proposée : chatbot basé sur RAG
+Texte court à dire oralement :
+La problématique peut être formulée ainsi : comment fournir aux étudiants et visiteurs des réponses rapides, fiables et basées sur les documents officiels de l’EST FBS ? Le projet ne se limite pas à un simple chatbot générique. Il s’appuie sur les documents indexés pour générer des réponses contextualisées. Cela permet d’améliorer la fiabilité des réponses.
+Visuel recommandé :
+Grande question centrale
+Schéma question → documents → réponse fiable
+Design conseillé :
+Slide minimaliste
+Problématique au centre
+Éviter les longs paragraphes
+Temps estimé : 1 minute
+Slide 6 : Objectifs Du Projet
+Contenu à afficher dans la slide :
+Développer une interface web de chatbot
+Interroger les documents PDF/TXT de l’EST FBS
+Générer des réponses contextualisées
+Afficher les sources utilisées
+Sauvegarder les interactions utilisateur
+Texte court à dire oralement :
+Les objectifs du projet sont à la fois fonctionnels et techniques. D’abord, il fallait créer une interface simple pour poser des questions. Ensuite, le système devait rechercher l’information dans les documents indexés. La réponse devait être générée à partir du contexte récupéré. Enfin, le projet prévoit l’affichage des sources et la sauvegarde des conversations.
+Visuel recommandé :
+Liste avec icônes : interface, documents, IA, sources, base de données
+Design conseillé :
+5 cartes simples ou liste alignée
+Couleurs cohérentes avec le reste
+Temps estimé : 1 minute
+Slide 7 : Solution Proposée
+Contenu à afficher dans la slide :
+Application web servie par FastAPI
+Interface chatbot en HTML/CSS/JavaScript
+Pipeline RAG avec LangChain
+Recherche vectorielle avec Pinecone
+Génération de réponse avec Groq LLM
+Texte court à dire oralement :
+La solution proposée est une application web complète. Le frontend permet à l’utilisateur de saisir une question. Le backend FastAPI reçoit cette question et la transmet au service RAG. Ce service recherche les passages pertinents dans Pinecone, puis utilise un modèle Groq pour générer la réponse finale. La réponse est ensuite affichée avec les sources.
+Visuel recommandé :
+Schéma : Utilisateur → Frontend → FastAPI → RAG → Pinecone/Groq
+Design conseillé :
+Schéma horizontal
+Chaque composant dans un bloc
+Éviter les détails de code
+Temps estimé : 1 minute
+Slide 8 : Architecture Générale
+Contenu à afficher dans la slide :
+Frontend : index.html
+Backend API : app/main.py
+Service NLP/RAG : app/rag.py
+Indexation documents : scripts/load_vectors.py
+Logs conversations : app/database.py
+Texte court à dire oralement :
+L’architecture du projet est simple et modulaire. Le fichier index.html contient toute l’interface utilisateur. Le fichier app/main.py contient les routes de l’API FastAPI. Le fichier app/rag.py regroupe la logique NLP/RAG. Le script load_vectors.py permet d’indexer les documents dans Pinecone. Enfin, database.py gère l’enregistrement des interactions.
+Visuel recommandé :
+Schéma d’architecture en couches
+Couche interface, API, NLP, base vectorielle, base de logs
+Design conseillé :
+Titre en haut
+Schéma au centre
+Fichiers importants en petits labels
+Temps estimé : 1 minute 30
+Slide 9 : Technologies Utilisées
+Contenu à afficher dans la slide :
+Frontend : HTML, CSS, JavaScript natif
+Backend : Python, FastAPI, Uvicorn
+NLP/RAG : LangChain, Groq, Gemini Embeddings
+Base vectorielle : Pinecone
+Données : SQLAlchemy, PostgreSQL/Supabase
+Texte court à dire oralement :
+Les technologies ont été choisies selon le rôle de chaque partie du projet. Le frontend utilise des technologies web natives. Le backend repose sur FastAPI, qui est adapté aux APIs modernes en Python. LangChain permet de construire le pipeline RAG. Pinecone est utilisé pour la recherche vectorielle, tandis que SQLAlchemy sert à sauvegarder les interactions.
+Visuel recommandé :
+Tableau Technologie / Rôle
+Logos Python, FastAPI, LangChain, Pinecone
+Design conseillé :
+Tableau à deux colonnes
+Couleurs sobres
+Éviter trop de logos
+Temps estimé : 1 minute
+Slide 10 : Frontend
+Contenu à afficher dans la slide :
+Interface en un seul fichier : index.html
+Zone de conversation utilisateur/chatbot
+Questions suggérées par thème
+Indicateur d’état API : en ligne / hors ligne
+Affichage des sources sous forme de tags
+Texte court à dire oralement :
+Le frontend est développé dans un seul fichier index.html. Il contient la structure HTML, le style CSS et la logique JavaScript. L’interface propose une zone de conversation, des questions rapides, un champ de saisie et un bouton d’envoi. Elle affiche aussi le statut de l’API et les sources utilisées dans la réponse.
+Fichiers du projet à mentionner :
+index.html
+Captures exactes à prendre :
+Capture de la page d’accueil du chatbot
+Capture d’une réponse affichant les sources
+Capture du statut “en ligne”
+Visuel recommandé :
+Capture réelle de l’interface
+Design conseillé :
+Capture à droite
+Points clés à gauche
+Ne pas surcharger avec du code
+Temps estimé : 1 minute 30
+Slide 11 : Backend / API
+Contenu à afficher dans la slide :
+API développée avec FastAPI
+GET / : affiche l’interface web
+GET /health : vérifie l’état du service
+POST /ask : traite la question utilisateur
+Sauvegarde des échanges après réponse
+Texte court à dire oralement :
+Le backend est défini dans app/main.py. Il expose trois routes principales. La route / sert le fichier frontend. La route /health permet de vérifier si le service est disponible. La route /ask reçoit la question, appelle le service RAG, puis retourne la réponse avec les sources.
+Fichiers du projet à mentionner :
+app/main.py
+app/database.py
+Routes API importantes :
+GET /
+GET /health
+POST /ask
+Visuel recommandé :
+Schéma API : Frontend → /ask → RAG → réponse JSON
+Design conseillé :
+Schéma à droite
+Routes listées à gauche
+Utiliser une couleur différente pour chaque route
+Temps estimé : 1 minute 30
+Slide 12 : Fonctionnement NLP / RAG
+Contenu à afficher dans la slide :
+Question transformée en recherche sémantique
+Récupération des passages pertinents depuis Pinecone
+Construction d’un contexte documentaire
+Génération de réponse avec Groq LLM
+Détection d’intention classique : non trouvé dans le projet
+Texte court à dire oralement :
+La partie NLP repose sur une architecture RAG. Quand l’utilisateur pose une question, le système recherche les passages les plus proches dans Pinecone. Ces passages sont ensuite utilisés comme contexte dans un prompt. Le modèle Groq génère une réponse à partir de ce contexte. Il n’y a pas de classificateur d’intention explicite trouvé dans le projet.
+Fichiers du projet à mentionner :
+app/rag.py
+scripts/load_vectors.py
+Schéma à dessiner :
+Question → Embedding → Pinecone → Contexte → Groq → Réponse
+Visuel recommandé :
+Diagramme RAG en 5 étapes
+Design conseillé :
+Schéma central
+Peu de texte
+Mettre “RAG” en évidence
+Temps estimé : 2 minutes
+Slide 13 : Modèle De Données
+Contenu à afficher dans la slide :
+Table principale : chat_logs
+Champs : id, timestamp, question
+Champs : reponse, sources
+Modèle défini avec SQLAlchemy
+Fichier local SQLite trouvé : chat_logs.db
+Texte court à dire oralement :
+Le projet contient un modèle de données principal appelé ChatLog. Il sert à sauvegarder les échanges entre l’utilisateur et le chatbot. Chaque interaction contient la question, la réponse, les sources et la date. Le code utilise SQLAlchemy avec une variable DATABASE_URL. Un fichier local chat_logs.db est aussi présent dans le projet.
+Fichiers du projet à mentionner :
+app/database.py
+chat_logs.db
+Schéma à dessiner :
+Classe ChatLog
+Attributs : id, timestamp, question, reponse, sources
+Visuel recommandé :
+Mini diagramme de classe
+Design conseillé :
+Diagramme simple au centre
+Éviter un vrai schéma SQL trop détaillé
+Temps estimé : 1 minute
+Slide 14 : Diagramme De Séquence
+Contenu à afficher dans la slide :
+L’utilisateur saisit une question
+Le frontend appelle POST /ask
+FastAPI transmet au service RAG
+Pinecone retourne les documents pertinents
+Groq génère la réponse et l’API la renvoie
+Texte court à dire oralement :
+Le diagramme de séquence montre le déroulement complet d’une question. L’utilisateur écrit sa question dans l’interface. Le frontend envoie une requête à l’API via /ask. Le backend appelle le service RAG qui interroge Pinecone, puis Groq génère la réponse. Enfin, l’API retourne la réponse au frontend avec les sources.
+Fichiers du projet à mentionner :
+index.html
+app/main.py
+app/rag.py
+app/database.py
+Schéma à dessiner :
+Utilisateur → Frontend → FastAPI → RAGService → Pinecone → Groq → Database → Frontend
+Visuel recommandé :
+Diagramme de séquence UML simplifié
+Design conseillé :
+Schéma pleine largeur
+Garder seulement les appels principaux
+Temps estimé : 1 minute
+Slide 15 : Interfaces Principales
+Contenu à afficher dans la slide :
+Page principale du chatbot
+Menu latéral avec questions rapides
+Zone de messages utilisateur / assistant
+Champ de saisie et bouton envoyer
+Tags de sources sous les réponses
+Texte court à dire oralement :
+L’interface principale est conçue pour être simple à utiliser. L’utilisateur peut poser directement une question ou cliquer sur une question suggérée. Les réponses apparaissent dans la zone de conversation. Lorsque des sources sont disponibles, elles sont affichées sous forme de tags. Cela permet à l’utilisateur de savoir d’où vient l’information.
+Captures exactes à prendre :
+Écran initial avec questions suggérées
+Question envoyée par l’utilisateur
+Réponse du chatbot avec sources
+Zone statut API + compteur segments
+Visuel recommandé :
+Montage de 2 captures côte à côte
+Design conseillé :
+Captures grandes et lisibles
+Peu de texte autour
+Éviter les captures floues
+Temps estimé : 1 minute
+Slide 16 : Tests Et Validation
+Contenu à afficher dans la slide :
+Test de disponibilité avec /health
+Test d’envoi de question avec /ask
+Vérification de l’affichage des sources
+Vérification de la sauvegarde des logs
+Tests automatisés : non trouvé dans le projet
+Texte court à dire oralement :
+La validation du projet repose principalement sur des tests manuels. Le endpoint /health permet de vérifier que l’API est opérationnelle. Le endpoint /ask permet de tester les réponses du chatbot. J’ai aussi vérifié l’affichage des sources et l’enregistrement des interactions. Aucun dossier de tests automatisés n’a été trouvé dans le projet.
+Fichiers du projet à mentionner :
+app/main.py
+app/database.py
+chat_logs.db
+Visuel recommandé :
+Tableau : Test / Résultat attendu
+Capture /health si disponible
+Design conseillé :
+Tableau simple
+Utiliser vert pour “validé”
+Ne pas inventer de tests automatisés
+Temps estimé : 1 minute
+Slide 17 : Difficultés Rencontrées
+Contenu à afficher dans la slide :
+Extraction et indexation des documents PDF/TXT
+Pertinence des réponses générées
+Gestion des sources documentaires
+Dépendance aux services externes
+Gestion des erreurs API côté frontend
+Texte court à dire oralement :
+Plusieurs difficultés techniques peuvent être identifiées dans ce type de projet. La première concerne l’indexation correcte des documents. La deuxième concerne la pertinence des réponses, car le chatbot dépend des passages récupérés. Le projet gère aussi l’affichage des sources pour renforcer la confiance. Enfin, l’interface prévoit un message d’erreur si l’API n’est pas joignable.
+Fichiers du projet à mentionner :
+scripts/load_vectors.py
+app/rag.py
+index.html
+Visuel recommandé :
+Tableau Difficulté / Solution
+Design conseillé :
+Deux colonnes
+Éviter un style trop chargé
+Temps estimé : 1 minute
+Slide 18 : Limites Et Perspectives
+Contenu à afficher dans la slide :
+Authentification utilisateur : non trouvé dans le projet
+Dashboard administrateur : non trouvé dans le projet
+Tests automatisés : non trouvé dans le projet
+Dépendance à Groq, Google et Pinecone
+Perspectives : admin, sécurité, statistiques, enrichissement documents
+Texte court à dire oralement :
+Le projet répond à l’objectif principal, mais il possède encore des limites. L’authentification et le tableau de bord administrateur ne sont pas présents dans le projet. Les tests automatisés ne sont pas trouvés non plus. Comme le système dépend de services externes, une indisponibilité peut affecter les réponses. Les perspectives concernent donc la sécurité, l’administration, le suivi statistique et l’enrichissement de la base documentaire.
+Visuel recommandé :
+Deux colonnes : Limites / Perspectives
+Design conseillé :
+Limites à gauche, perspectives à droite
+Couleurs sobres : gris et bleu
+Ne pas présenter les limites comme des échecs
+Temps estimé : 1 minute
+Slide 19 : Démonstration
+Contenu à afficher dans la slide :
+Lancer le serveur FastAPI
+Ouvrir http://localhost:8000
+Vérifier le statut API
+Poser des questions sur formations, admission, règlement
+Observer la réponse et les sources
+Texte court à dire oralement :
+Pour la démonstration, je lance le serveur FastAPI puis j’ouvre l’application dans le navigateur. Je commence par vérifier que l’API est en ligne. Ensuite, je pose une question sur les formations de l’EST FBS. Je montre la réponse générée ainsi que les sources affichées. Je peux aussi tester une question sur l’admission ou le règlement intérieur.
+Questions à poser :
+Quelles formations et quels diplômes propose l’EST FBS ?
+Quelles sont les conditions d’admission à l’EST FBS ?
+Que dit le règlement sur les absences ?
+Où se trouve l’EST Fquih Ben Salah ?
+Visuel recommandé :
+Capture de l’interface avant la démo
+Ou slide avec les questions de test
+Design conseillé :
+Liste courte
+Mettre les questions dans des bulles
+Préparer des captures en secours
+Temps estimé : 3 minutes
+Slide 20 : Conclusion
+Contenu à afficher dans la slide :
+Chatbot fonctionnel pour assister les utilisateurs
+Réponses basées sur les documents indexés
+Architecture web simple et extensible
+Apport : accès rapide à l’information EST FBS
+Perspectives d’amélioration identifiées
+Texte court à dire oralement :
+En conclusion, ce projet a permis de réaliser un chatbot d’assistance pour l’EST FBS. Le système s’appuie sur une architecture RAG afin de répondre à partir des documents indexés. Il propose une interface simple, une API backend et un mécanisme de sauvegarde des interactions. Le projet apporte une valeur ajoutée pour les étudiants et les visiteurs. Il peut être amélioré par l’ajout d’un espace administrateur, de tests automatisés et de fonctionnalités de sécurité.
+Visuel recommandé :
+Icône réussite
+Logo EST FBS
+Texte “Merci pour votre attention”
+Design conseillé :
+Slide très simple
+Message final clair
+Éviter d’ajouter de nouveaux détails techniques
+Temps estimé : 30 secondes

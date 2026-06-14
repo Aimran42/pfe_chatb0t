@@ -1,0 +1,121 @@
+Voici le contenu exact des 20 slides, prêt à coller dans PowerPoint ou dans un outil IA de présentation.
+Slide 1 : Page De Garde
+Chatbot d’assistance pour le site de l’EST FBS
+Projet basé sur le NLP et le RAG
+Projet de Fin d’Études
+Réalisé par : [Votre nom]
+Encadré par : [Nom de l’encadrant]
+Slide 2 : Plan De La Présentation
+Contexte général et problème traité
+Problématique et objectifs du projet
+Solution proposée et architecture générale
+Fonctionnement Frontend, Backend et NLP/RAG
+Tests, démonstration, limites et perspectives
+Slide 3 : Contexte Général
+EST FBS : École Supérieure de Technologie de Fkih Ben Salah
+Établissement rattaché à l’Université Sultan Moulay Slimane
+Informations disponibles dans des documents PDF/TXT
+Besoin d’un accès rapide aux informations
+Public cible : étudiants, visiteurs et administration
+Slide 4 : Problème Traité
+Informations dispersées dans plusieurs documents
+Recherche manuelle lente et peu pratique
+Questions répétitives des étudiants
+Difficulté à obtenir une réponse précise rapidement
+Besoin d’une assistance automatique et intelligente
+Slide 5 : Problématique
+Comment faciliter l’accès aux informations de l’EST FBS ?
+Comment exploiter les documents officiels de l’école ?
+Comment fournir des réponses rapides et fiables ?
+Comment améliorer l’expérience des étudiants et visiteurs ?
+Solution proposée : chatbot basé sur le RAG
+Slide 6 : Objectifs Du Projet
+Développer une interface web de chatbot
+Permettre aux utilisateurs de poser des questions
+Interroger les documents PDF/TXT de l’EST FBS
+Générer des réponses contextualisées
+Afficher les sources et sauvegarder les interactions
+Slide 7 : Solution Proposée
+Application web servie par FastAPI
+Interface chatbot en HTML/CSS/JavaScript
+Pipeline RAG basé sur LangChain
+Recherche vectorielle avec Pinecone
+Génération de réponse avec Groq LLM
+Slide 8 : Architecture Générale
+Frontend : index.html
+Backend API : app/main.py
+Service NLP/RAG : app/rag.py
+Indexation des documents : scripts/load_vectors.py
+Journalisation : app/database.py
+Slide 9 : Technologies Utilisées
+Frontend : HTML, CSS, JavaScript natif
+Backend : Python, FastAPI, Uvicorn
+NLP/RAG : LangChain, Gemini Embeddings, Groq
+Base vectorielle : Pinecone
+Données : SQLAlchemy, PostgreSQL/Supabase
+Slide 10 : Frontend
+Interface développée dans index.html
+Zone de conversation utilisateur/chatbot
+Questions suggérées par thème
+Indicateur d’état API : en ligne / hors ligne
+Affichage des sources sous forme de tags
+Slide 11 : Backend / API
+API développée avec FastAPI
+GET / : affichage de l’interface web
+GET /health : vérification de l’état du service
+POST /ask : traitement des questions utilisateur
+Sauvegarde des échanges après génération de réponse
+Slide 12 : Fonctionnement NLP / RAG
+Question utilisateur transformée en recherche sémantique
+Récupération des passages pertinents depuis Pinecone
+Construction d’un contexte documentaire
+Génération de réponse avec Groq LLM
+Détection d’intention classique : non trouvé dans le projet
+Slide 13 : Modèle De Données
+Table principale : chat_logs
+Champs : id, timestamp, question
+Champs : reponse, sources
+Modèle défini avec SQLAlchemy
+Fichier local trouvé : chat_logs.db
+Slide 14 : Diagramme De Séquence
+L’utilisateur saisit une question
+Le frontend appelle POST /ask
+FastAPI transmet la question au service RAG
+Pinecone retourne les passages pertinents
+Groq génère la réponse et l’API la renvoie
+Slide 15 : Interfaces Principales
+Page principale du chatbot
+Menu avec questions rapides
+Zone de messages utilisateur / assistant
+Champ de saisie et bouton d’envoi
+Sources affichées sous les réponses
+Slide 16 : Tests Et Validation
+Test de disponibilité avec /health
+Test d’envoi de question avec /ask
+Vérification de l’affichage des sources
+Vérification de la sauvegarde des logs
+Tests automatisés : non trouvé dans le projet
+Slide 17 : Difficultés Rencontrées
+Extraction et indexation des documents PDF/TXT
+Pertinence des réponses générées
+Gestion des sources documentaires
+Dépendance aux services externes
+Gestion des erreurs API côté frontend
+Slide 18 : Limites Et Perspectives
+Authentification utilisateur : non trouvé dans le projet
+Dashboard administrateur : non trouvé dans le projet
+Tests automatisés : non trouvé dans le projet
+Dépendance à Groq, Google et Pinecone
+Perspectives : sécurité, statistiques, enrichissement des documents
+Slide 19 : Démonstration
+Lancer le serveur FastAPI
+Ouvrir http://localhost:8000
+Vérifier le statut de l’API
+Poser des questions sur les formations, l’admission et le règlement
+Observer la réponse générée et les sources affichées
+Slide 20 : Conclusion
+Chatbot fonctionnel pour assister les utilisateurs
+Réponses basées sur les documents indexés
+Architecture web simple et extensible
+Apport : accès rapide à l’information EST FBS
+Perspectives d’amélioration identifiées
