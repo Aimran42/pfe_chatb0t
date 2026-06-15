@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "phosphate_quality_classification"
+version = "0.1.0"
+description = "Mini Data Science project - Classification de la qualité du phosphate"
+authors = ["Your Name"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+streamlit = "^1.35"
+pandas = "^2.1"
+numpy = "^1.26"
+matplotlib = "^3.8"
+seaborn = "^0.13"
+scikit-learn = "^1.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
