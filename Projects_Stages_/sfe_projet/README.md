@@ -46,3 +46,4 @@ ou bien :
 poetry install
 
 streamlit run app.py
+

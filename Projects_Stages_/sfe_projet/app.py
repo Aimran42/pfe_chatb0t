@@ -59,10 +59,7 @@ if uploaded_file is not None:
         sns.boxplot(x="Qualite_Phosphate", y=col, data=df, ax=ax)
         st.pyplot(fig)
 
-    # ===============================
-    # 3️⃣ Prétraitement
-    # ===============================
-
+#Prétraitement
     X = df.drop("Qualite_Phosphate", axis=1)
     y = df["Qualite_Phosphate"]
 
@@ -79,9 +76,7 @@ if uploaded_file is not None:
         X, y, test_size=0.3, random_state=42
     )
 
-    # ===============================
-    # 4️⃣ Modèles
-    # ===============================
+#  Modèles
 
     models = {
         "Decision Tree": DecisionTreeClassifier(),
@@ -115,17 +110,13 @@ if uploaded_file is not None:
         sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax_cm)
         st.pyplot(fig_cm)
 
-    # ===============================
-    # 5️⃣ Comparaison
-    # ===============================
+    # Comparaison
 
     st.subheader("Comparaison des Modèles")
     results_df = pd.DataFrame(results, columns=["Modèle", "Accuracy", "Precision", "Recall", "F1-score"])
     st.write(results_df)
 
-    # ===============================
-    # 6️⃣ Prédiction manuelle
-    # ===============================
+    # Prédiction manuelle
 
     st.subheader("Prédiction d'un nouveau phosphate")
 
